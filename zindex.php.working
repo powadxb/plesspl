@@ -1,0 +1,1156 @@
+Thank you. Let me provide the complete zindex.php file broken down into clear sections.
+
+SECTION 1 - PHP HEADER
+```php
+<?php 
+session_start();
+$page_title = 'Products Control Panel';
+require 'php/bootstrap.php';
+
+// Ensure session is active
+if (!isset($_SESSION['dins_user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$user_id = $_SESSION['dins_user_id'];
+$user_details = $DB->query(" SELECT * FROM users WHERE id=?" , [$user_id])[0];
+
+// Check if user has permission for this page
+$has_access = $DB->query(
+    "SELECT has_access FROM user_permissions WHERE user_id = ? AND page = 'zindex'", 
+    [$user_id]
+);
+
+if (empty($has_access) || !$has_access[0]['has_access']) {
+    header('Location: no_access.php');
+    exit;
+}
+
+require 'assets/header.php';
+
+// all manufacturers
+$all_manufacturers = $DB->query(" SELECT * FROM master_pless_manufacturers ORDER BY manufacturer_name ASC");
+
+// tax_rates
+$tax_rates = $DB->query(" SELECT * FROM tax_rates ORDER BY name ASC");
+
+// master_categories
+$categories = $DB->query(" SELECT * FROM master_categories ORDER BY pos_category ASC");
+
+// settings
+require 'php/settings.php';
+?>
+<link rel="stylesheet" href="assets/css/tables.css?<?=time()?>">
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<style>
+.incVatPrice, .fixedPriceMethod {
+  display: none;
+}
+
+.form-group label {
+  font-size: 10px;
+  margin-bottom: 0;
+}
+
+.page-wrapper {
+  background-color: #f9fafb;
+  min-height: 100vh;
+}
+
+.welcome {
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 0;
+}
+
+.title-4 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.table-data__tool {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.table-data__tool-search {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+.search-sku {
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.search-main {
+  flex-grow: 1;
+}
+
+.btn {
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+}
+
+.btn-xs {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.btn-success {
+  background-color: #059669;
+}
+
+.btn-success:hover {
+  background-color: #047857;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.au-input {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+  width: 100%;
+  background-color: #fff;
+}
+
+.au-input--xs {
+  height: 32px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.au-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  outline: none;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  max-height: calc(100vh - 200px);
+  margin-bottom: 1rem;
+  background-color: white;
+}
+
+.table {
+  width: 100%;
+  margin-bottom: 0;
+  background-color: white;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.table th {
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fa;
+  padding: 0.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  border: 1px solid #e5e7eb;
+  white-space: nowrap;
+  vertical-align: middle;
+  color: #374151;
+  z-index: 2;
+}
+
+.table td {
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  white-space: nowrap;
+  vertical-align: middle;
+  color: #1f2937;
+}
+
+.table th:nth-child(1) { min-width: 80px; }
+.table th:nth-child(2) { min-width: 200px; }
+.table th:nth-child(3) { min-width: 120px; }
+.table th:nth-child(4) { min-width: 100px; }
+.table th:nth-child(5) { min-width: 120px; }
+.table th:nth-child(6) { min-width: 100px; }
+.table th:nth-child(7) { min-width: 80px; }
+.table th:nth-child(8) { min-width: 80px; }
+
+.stock-filter-input {
+    width: 80px;
+    height: 24px;
+    padding: 2px 4px;
+    margin-left: 4px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+}
+
+.toggle-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #374151;
+    margin-bottom: 0.25rem;
+}
+
+.show-admin-columns th:nth-child(9),
+.show-admin-columns th:nth-child(10),
+.show-admin-columns th:nth-child(11),
+.show-admin-columns th:nth-child(12),
+.show-admin-columns th:nth-child(13),
+.show-admin-columns th:nth-child(14),
+.show-admin-columns td:nth-child(9),
+.show-admin-columns td:nth-child(10),
+.show-admin-columns td:nth-child(11),
+.show-admin-columns td:nth-child(12),
+.show-admin-columns td:nth-child(13),
+.show-admin-columns td:nth-child(14) {
+  display: table-cell;
+}
+
+.form-check {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.form-check-label {
+  font-size: 0.875rem;
+  margin-left: 0.5rem;
+  user-select: none;
+}
+
+.form-check-input {
+  margin: 0;
+}
+
+.sortWrap {
+  display: inline-flex;
+  flex-direction: column;
+  margin-left: 4px;
+  gap: 0;
+}
+
+.sortIcon {
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 8px;
+  line-height: 1;
+}
+
+.sortIcon:hover {
+  color: #4b5563;
+}
+
+@media (max-width: 768px) {
+  /* Mobile styles as in original */
+}
+
+@media (max-width: 375px) {
+  /* Small screen styles as in original */
+}
+
+/* Modal Styles */
+.modal-content {
+  border-radius: 0.5rem;
+  border: none;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.modal-header {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 1.5rem;
+}
+
+.modal-title {
+  font-weight: 600;
+  color: #111827;
+}
+
+.form-control {
+  border-radius: 0.375rem;
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 0.75rem;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.chosen-container {
+  width: 100% !important;
+}
+
+.chosen-container-single .chosen-single {
+  border-radius: 0.375rem;
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 0.75rem;
+  height: auto;
+  line-height: 1.5;
+  background: white;
+}
+
+.chosen-container-single .chosen-single div b {
+  margin-top: 7px;
+}
+</style>
+<div class="page-wrapper">
+    <?php require 'assets/navbar.php' ?>
+    <div class="page-content--bgf7">
+        <section class="au-breadcrumb2 p-0 pt-4"></section>
+
+        <section class="welcome p-t-10">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="title-4"><?=$page_title?></h1>
+                        <hr class="line-seprate">
+                    </div>
+                </div>
+            </div>
+        </section>
+            
+        <section class="p-t-20">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-data__tool">
+                            <div class="table-data__tool-left">
+                                <?php if ($user_details['admin'] != 0): ?>
+                                <button class="btn btn-success btn-xs" id="newItemBtn">
+                                    <i class="zmdi zmdi-plus"></i> Add
+                                </button>
+                                <?php endif; ?>
+                            </div>
+
+                            <?php if ($user_details['admin'] != 0): ?>
+                            <div class="table-data__tool-center">
+                                <button class="btn btn-primary btn-xs" id="exportToCsv">
+                                    <i class="fas fa-file-export"></i> CSV
+                                </button>
+                                <button class="btn btn-success btn-xs" id="exportToPos">
+                                    <i class="fas fa-cash-register"></i> POS
+                                </button>
+                                <button class="btn btn-warning btn-xs" id="exportToMagento">
+                                    <i class="fas fa-shopping-cart"></i> MAG
+                                </button>
+                            </div>
+                            <?php endif; ?>
+
+                            <!-- Stock Filters -->
+                            <div class="filter-section">
+                                <div class="filter-group">
+                                    <div class="filter-group-title">CS Stock Filters</div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input filterRecords" id="csNegativeStock"> Negative Stock
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input filterRecords" id="csZeroStock"> Zero Stock
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input filterRecords" id="csAboveStock">
+                                            ≥ <input type="number" class="stock-filter-input" id="csAboveValue" value="0">
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input filterRecords" id="csBelowStock">
+                                            ≤ <input type="number" class="stock-filter-input" id="csBelowValue" value="0">
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="filter-group">
+                                    <div class="filter-group-title">AS Stock Filters</div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input filterRecords" id="asNegativeStock"> Negative Stock
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input filterRecords" id="asZeroStock"> Zero Stock
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input filterRecords" id="asAboveStock">
+                                            ≥ <input type="number" class="stock-filter-input" id="asAboveValue" value="0">
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input filterRecords" id="asBelowStock">
+                                            ≤ <input type="number" class="stock-filter-input" id="asBelowValue" value="0">
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Status Filters -->
+                                <div class="filter-group">
+                                    <div class="filter-group-title">Status Filters</div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" id="enabledProducts" class="form-check-input filterRecords" checked> Active
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" id="wwwFilter" class="form-check-input filterRecords"> WWW
+                                        </label>
+                                    </div>
+                                    <?php if ($user_details['admin'] != 0): ?>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" id="showAdminColumns" class="form-check-input"> Admin
+                                        </label>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+
+                            <div class="table-data__tool-search">
+                                <div class="search-sku">
+                                    <input type="text" class="au-input au-input--xs" id="skuSearchQuery" placeholder="SKU Search" style="background-color: #fed8b1;">
+                                </div>
+                                <div class="search-main">
+                                    <input type="text" class="au-input au-input--xs" id="searchQuery" placeholder="Search Products">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Table Structure -->
+                        <div class="table-responsive table-responsive-data2">
+                            <table class="table table-condensed table-striped table-bordered table-hover table-sm pb-2">
+                                <thead>
+                                    <tr>
+                                        <?php if ($user_details['admin'] != 0): ?>
+                                        <th>Enable</th>
+                                        <th>WWW</th>
+                                        <?php endif; ?>
+                                        <!-- Original columns continue -->
+                                      <th>
+                                           <div class="sortWrap">
+                                               <i class="fas fa-sort-up sortIcon sortCol sortUp" data-col="sku" data-order="ASC"></i>
+                                               <i class="fas fa-sort-down sortIcon sortCol sortDown" data-col="sku" data-order="DESC"></i>
+                                           </div>
+                                           sku
+                                       </th>
+                                       <th>
+                                           <div class="sortWrap">
+                                               <i class="fas fa-sort-up sortIcon sortCol sortUp" data-col="name" data-order="ASC"></i>
+                                               <i class="fas fa-sort-down sortIcon sortCol sortDown" data-col="name" data-order="DESC"></i>
+                                           </div>
+                                           name
+                                       </th>
+                                       <th>
+                                           <div class="sortWrap">
+                                               <i class="fas fa-sort-up sortIcon sortCol sortUp" data-col="manufacturer" data-order="ASC"></i>
+                                               <i class="fas fa-sort-down sortIcon sortCol sortDown" data-col="manufacturer" data-order="DESC"></i>
+                                           </div>
+                                           manufacturer
+                                       </th>
+                                       <th>
+                                           <div class="sortWrap">
+                                               <i class="fas fa-sort-up sortIcon sortCol sortUp" data-col="mpn" data-order="ASC"></i>
+                                               <i class="fas fa-sort-down sortIcon sortCol sortDown" data-col="mpn" data-order="DESC"></i>
+                                           </div>
+                                           mpn
+                                       </th>
+                                       <th>
+                                           <div class="sortWrap">
+                                               <i class="fas fa-sort-up sortIcon sortCol sortUp" data-col="categories" data-order="ASC"></i>
+                                               <i class="fas fa-sort-down sortIcon sortCol sortDown" data-col="categories" data-order="DESC"></i>
+                                           </div>
+                                           Category
+                                       </th>
+                                       <th>
+                                           <div class="sortWrap">
+                                               <i class="fas fa-sort-up sortIcon sortCol sortUp" data-col="ean" data-order="ASC"></i>
+                                               <i class="fas fa-sort-down sortIcon sortCol sortDown" data-col="ean" data-order="DESC"></i>
+                                           </div>
+                                           ean
+                                       </th>
+                                       <th>
+                                           <div class="sortWrap">
+                                               <i class="fas fa-sort-up sortIcon sortCol sortUp" data-col="price" data-order="ASC"></i>
+                                               <i class="fas fa-sort-down sortIcon sortCol sortDown" data-col="price" data-order="DESC"></i>
+                                           </div>
+                                           Retail inc
+                                       </th>
+                                       <th>
+                                           <div class="sortWrap">
+                                               <i class="fas fa-sort-up sortIcon sortCol sortUp" data-col="trade" data-order="ASC"></i>
+                                               <i class="fas fa-sort-down sortIcon sortCol sortDown" data-col="trade" data-order="DESC"></i>
+                                           </div>
+                                           Trade inc
+                                       </th>
+                                       <?php if ($user_details['admin'] != 0): ?>
+                                       <th>
+                                           <div class="sortWrap">
+                                               <i class="fas fa-sort-up sortIcon sortCol sortUp" data-col="odoo_qty" data-order="ASC"></i>
+                                               <i class="fas fa-sort-down sortIcon sortCol sortDown" data-col="odoo_qty" data-order="DESC"></i>
+                                           </div>
+                                           CS Stock
+                                       </th>
+                                       <th>
+                                           <div class="sortWrap">
+                                               <i class="fas fa-sort-up sortIcon sortCol sortUp" data-col="odoo_qty" data-order="ASC"></i>
+                                               <i class="fas fa-sort-down sortIcon sortCol sortDown" data-col="odoo_qty" data-order="DESC"></i>
+                                           </div>
+                                           AS Stock
+                                       </th>
+                                       <th>
+                                           <div class="sortWrap">
+                                               <i class="fas fa-sort-up sortIcon sortCol sortUp" data-col="pricing_method" data-order="ASC"></i>
+                                               <i class="fas fa-sort-down sortIcon sortCol sortDown" data-col="pricing_method" data-order="DESC"></i>
+                                           </div>
+                                           pricing method
+                                       </th>
+                                       <th>
+                                           <div class="sortWrap">
+                                               <i class="fas fa-sort-up sortIcon sortCol sortUp" data-col="cost" data-order="ASC"></i>
+                                               <i class="fas fa-sort-down sortIcon sortCol sortDown" data-col="cost" data-order="DESC"></i>
+                                           </div>
+                                           cost
+                                       </th>
+                                       <th>
+                                           <div class="sortWrap">
+                                               <i class="fas fa-sort-up sortIcon sortCol sortUp" data-col="pricing_cost" data-order="ASC"></i>
+                                               <i class="fas fa-sort-down sortIcon sortCol sortDown" data-col="pricing_cost" data-order="DESC"></i>
+                                           </div>
+                                           P'Cost
+                                       </th>
+                                       <th>
+                                           <div class="sortWrap">
+                                               <i class="fas fa-sort-up sortIcon sortCol sortUp" data-col="retail_markup" data-order="ASC"></i>
+                                               <i class="fas fa-sort-down sortIcon sortCol sortDown" data-col="retail_markup" data-order="DESC"></i>
+                                           </div>
+                                           retail %
+                                       </th>
+                                       <th>
+                                           <div class="sortWrap">
+                                               <i class="fas fa-sort-up sortIcon sortCol sortUp" data-col="trade_markup" data-order="ASC"></i>
+                                               <i class="fas fa-sort-down sortIcon sortCol sortDown" data-col="trade_markup" data-order="DESC"></i>
+                                           </div>
+                                           trade %
+                                       </th>
+                                       <th class="text-right">CS Total Value</th>
+                                       <th class="text-right">AS Total Value</th>
+                                       <th class="text-right">Combined Total</th>
+                                       <th>Edit</th>
+                                       <?php endif; ?>
+                                   </tr>
+                               </thead>
+                               <tbody id="records"></tbody>
+                           </table>
+                           <div id="pagination"></div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </section>
+
+       <section class="p-t-60 p-b-20">
+           <div class="container">
+               <div class="row">
+                   <div class="col-md-12">
+                       <div class="copyright">
+                           <p>Copyright © <?=date("Y")?> <?=$website_name?>. All rights reserved.</p>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </section>
+   </div>
+</div>
+<!-- Add New Item Popup -->
+<div class="modal fade" id="newItemPopup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add New Item</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="newItemForm">
+                    <div class="row">
+                        <div class="col-sm-4" style="border-right: 3px solid #007bff;">
+                            <div class="form-group">
+                                <input type="text" id="name" name="name" class="form-control requiredField" placeholder="Name">
+                            </div>
+                            <div class="form-group">
+                                <select id="manufacturer" name="manufacturer" class="form-control dropDownMenu requiredField">
+                                    <option value="" selected>Select Manufacturer</option>
+                                    <?php foreach($all_manufacturers as $manufacturer): ?>
+                                    <option value="<?=$manufacturer['manufacturer_name']?>"><?=$manufacturer['manufacturer_name']?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="mpn" name="mpn" class="form-control" placeholder="Mpn">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="ean" name="ean" class="form-control" placeholder="Barcode">
+                            </div>
+                            <div class="form-group">
+                                <select id="categories" name="categories" class="form-control dropDownMenu requiredField">
+                                    <option value="" selected>Select Category</option>
+                                    <?php foreach($categories as $category): ?>
+                                    <option value="<?=$category['id'].'|'.$category['pless_main_category'].'|'.$category['pos_category']?>"><?=$category['pless_main_category']?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select id="supplier" name="supplier" class="form-control dropDownMenu">
+                                    <option value="" selected>Select Supplier</option>
+                                </select>
+                            </div>
+                            <div class="form-check">
+                                <div class="checkbox">
+                                    <label for="enable" class="form-check-label ">
+                                        <input type="checkbox" id="enable" name="enable" value="enabled" class="form-check-input" checked> Enabled
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-check">
+                                <div class="checkbox">
+                                    <label for="export_to_magento" class="form-check-label ">
+                                        <input type="checkbox" id="export_to_magento" name="export_to_magento" value="export_to_magento" class="form-check-input" checked> On WWW
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-check">
+                                <div class="checkbox">
+                                    <label for="on_pos" class="form-check-label ">
+                                        <input type="checkbox" id="on_pos" name='on_pos' value="on_pos" class="form-check-input" disabled> On POS
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="row ml-0 mr-0">
+                                <div class="form-group col-sm-3">
+                                    <label for="cost">Cost</label>
+                                    <input type="text" id="cost" name="cost" class="form-control doCalculations cost" placeholder="Cost">
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <label for="pricing_cost">Pricing Cost</label>
+                                    <input type="text" id="pricing_cost" name="pricing_cost" class="form-control doCalculations pricing_cost" placeholder="Pricing Cost">
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="pricing_method">Pricing Method</label>
+                                    <select name="pricing_method" id="pricing_method" class="form-control doCalculations pricing_method">
+                                        <option value="0">Markup on cost</option>
+                                        <option value="1" selected>Markup on P'Cost</option>
+                                        <option value="2">Fixed Price</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row ml-0 mr-0">
+                                <div class="form-group col-sm-4">
+                                    <label for="targetRetail">Target Retail Inc Vat</label>
+                                    <input type="text" id="targetRetail" name="target_retail" class="form-control bg-secondary text-white whitePlaceholder calculationField doCalculations targetRetail" placeholder="Target Retail Inc Vat">
+                                    <p class="text-muted"> Profit = £<span id="targetRetailProfit" class="targetRetailProfit calculationResult">0.00</span></p>
+                                    <p class="text-muted"> Markup = <span id="targetRetailPercent" class="targetRetailPercent calculationResult">0.00</span>%</p>
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <label for="targetTrade">Target Trade Inc Vat</label>
+                                    <input type="text" id="targetTrade" name="target_trade" class="form-control bg-secondary text-white whitePlaceholder calculationField doCalculations targetTrade" placeholder="Target Trade Inc Vat">
+                                    <p class="text-muted"> Profit = £<span id="targetTradeProfit" class="targetTradeProfit calculationResult">0.00</span></p>
+                                    <p class="text-muted"> Markup = <span id="targetTradePercent" class="targetTradePercent calculationResult">0.00</span>%</p>
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <label for="vatScheme">Vat Scheme</label>
+                                    <select name="tax_rate_id" id="vatScheme" class="form-control dropDownMenu doCalculations vatScheme">
+                                        <?php foreach($tax_rates as $tax_rate): ?>
+                                        <option value="<?=$tax_rate['tax_rate_id']?>" data-tax_rate="<?=$tax_rate['tax_rate']?>" <?=($tax_rate['tax_rate']==0.2)?"selected":''?> ><?=$tax_rate['name']?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row ml-0 mr-0">
+                                <div class="form-group col-sm-6 markupPriceMehtod">
+                                    <label for="retailMarkup">Retail Markup %</label>
+                                    <input type="text" id="retailMarkup" name="retail_markup" class="form-control bg-success text-white whitePlaceholder calculationField doCalculations retailMarkup" placeholder="Retail Markup %">
+                                    <p class="text-muted"> Profit = <span id="retailMarkupProfit" class="retailMarkupProfit calculationResult">0.00</span></p>
+                                    <p class="text-muted incVatPrice"> Inc Vat = <span id="retailMarkupIncVatPrice" class="retailMarkupIncVatPrice calculationResult">0.00</span></p>
+                                </div>
+                                <div class="form-group col-sm-6 markupPriceMehtod">
+                                    <label for="tradeMarkup">Trade Markup %</label>
+                                    <input type="text" id="tradeMarkup" name="trade_markup" class="form-control bg-primary text-white whitePlaceholder calculationField doCalculations tradeMarkup" placeholder="Trade Markup %">
+                                    <p class="text-muted"> Profit = <span id="tradeMarkupProfit" class="tradeMarkupProfit calculationResult">0.00</span></p>
+                                    <p class="text-muted incVatPrice"> Inc Vat = <span id="tradeMarkupIncVatPrice" class="tradeMarkupIncVatPrice calculationResult">0.00</span></p>
+                                </div>
+                                <div class="form-group col-sm-6 fixedPriceMethod">
+                                    <label for="fixedRetailPricing">Fixed Retail Pricing</label>
+                                    <input type="text" id="fixedRetailPricing" name="fixed_retail_pricing" class="form-control bg-success text-white whitePlaceholder calculationField doCalculations fixedRetailPricing" placeholder="Fixed Retail Pricing">
+                                    <p class="text-muted"> Profit = <span id="fixedRetailPricingProfit" class="fixedRetailPricingProfit calculationResult">0.00</span></p>
+                                </div>
+                                <div class="form-group col-sm-6 fixedPriceMethod">
+                                    <label for="fixedTradePricing">Fixed Trade Pricing</label>
+                                    <input type="text" id="fixedTradePricing" name="fixed_trade_pricing" class="form-control bg-primary text-white whitePlaceholder calculationField doCalculations fixedTradePricing" placeholder="Fixed Trade Pricing">
+                                    <p class="text-muted"> Profit = <span id="fixedTradePricingProfit" class="fixedTradePricingProfit calculationResult">0.00</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <button class="btn btn-success d-block mx-auto">Add New Item</button>
+                    
+                    <input type="hidden" name="retail_inc_vat" class="retailIncVat">
+                    <input type="hidden" name="trade_inc_vat" class="tradeIncVat">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Record Popup -->
+<div class="modal fade" id="updateRecordPopup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Update Record Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="updateRecordContent"></div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="limit" value="<?=$settings['table_lines']?>">
+<input type="hidden" id="offset" value="0">
+<input type="hidden" id="sortCol">
+
+<?php require 'assets/footer.php'; ?>
+<script>
+document.getElementById('exportToCsv')?.addEventListener('click', function () {
+    const searchQuery = document.getElementById('searchQuery').value;
+    const skuSearchQuery = document.getElementById('skuSearchQuery').value;
+    const enabledProducts = document.getElementById('enabledProducts').checked ? 1 : 0;
+    const wwwFilter = document.getElementById('wwwFilter').checked ? 1 : 0;
+
+    const url = `export_csv.php?searchQuery=${encodeURIComponent(searchQuery)}&skuSearchQuery=${encodeURIComponent(skuSearchQuery)}&enabledProducts=${enabledProducts}&wwwFilter=${wwwFilter}`;
+    window.location.href = url;
+});
+
+$(document).ready(function(){
+    $(".dropDownMenu").chosen({
+        width:'100%'
+    });
+
+    // Prevent form submission on enter key for modal forms
+    $(document).on('keypress', '#newItemForm, #updateDetailsForm', function(e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
+    
+    function loadRecords(limit, offset, searchType='general'){
+        var searchQuery = $("#searchQuery").val(),
+            skuSearchQuery = $("#skuSearchQuery").val(),
+            enabledProducts = $("#enabledProducts")[0].checked,
+            wwwFilter = $("#wwwFilter")[0].checked,
+            sortCol = $("#sortCol").val(),
+            
+            // Stock filters
+            csNegativeStock = $("#csNegativeStock")[0].checked,
+            csZeroStock = $("#csZeroStock")[0].checked,
+            csAboveStock = $("#csAboveStock")[0].checked,
+            csBelowStock = $("#csBelowStock")[0].checked,
+            csAboveValue = $("#csAboveValue").val(),
+            csBelowValue = $("#csBelowValue").val(),
+            
+            asNegativeStock = $("#asNegativeStock")[0].checked,
+            asZeroStock = $("#asZeroStock")[0].checked,
+            asAboveStock = $("#asAboveStock")[0].checked,
+            asBelowStock = $("#asBelowStock")[0].checked,
+            asAboveValue = $("#asAboveValue").val(),
+            asBelowValue = $("#asBelowValue").val();
+
+        $("#spinner").show();
+        $.ajax({
+            type:'POST',
+            url:'php/zlist_products.php',
+            data:{
+                limit:limit, 
+                offset:offset, 
+                search_query:searchQuery, 
+                sku_search_query:skuSearchQuery, 
+                enabled_products:enabledProducts,
+                www_filter:wwwFilter,
+                sort_col:sortCol,
+                search_type:searchType,
+                
+                cs_negative_stock: csNegativeStock,
+                cs_zero_stock: csZeroStock,
+                cs_above_stock: csAboveStock,
+                cs_below_stock: csBelowStock,
+                cs_above_value: csAboveValue,
+                cs_below_value: csBelowValue,
+                
+                as_negative_stock: asNegativeStock,
+                as_zero_stock: asZeroStock,
+                as_above_stock: asAboveStock,
+                as_below_stock: asBelowStock,
+                as_above_value: asAboveValue,
+                as_below_value: asBelowValue
+            }
+        }).done(function(response){
+            $("#spinner").hide();
+            if(response.length>0){
+                $("#records").html(response);
+                $('[data-toggle="tooltip"]').tooltip();
+                $(".table-data__tool").width($(".table").width())
+                $("#pagination").html($("#PaginationInfoResponse").html());
+                $("html, body").animate({ scrollTop: 0 }, "slow");
+            }
+        });
+    }
+    
+    loadRecords($("#limit").val(), $("#offset").val());
+
+    $(document).on('click', '.recordsPage', function(e){
+        e.preventDefault();
+        var limit = $(this).attr("data-limit"),
+            offset = $(this).attr("data-offset");
+        loadRecords(limit, offset);
+    });
+
+    $(document).on('submit', '.jumpToPageForm', function(e){
+        e.preventDefault();
+        var form = $(this),
+            pageNum = form.find(".jumpToPage").val(),
+            lastPage = form.find(".jumpToPage").attr("data-last_page"),
+            limit = form.find(".jumpToPage").attr("data-limit"),
+            offset = limit * (pageNum -1);
+        
+        if(parseInt(pageNum)<=parseInt(lastPage)){
+            loadRecords(limit, offset);
+        } else {
+            Swal.fire(
+                'Oops...',
+                "The page number you have entered does not exist, the last page number is "+lastPage,
+                'warning'
+            );
+        }
+    });
+
+    $(".filterRecords").change(function(e){
+        e.preventDefault();
+        loadRecords($("#limit").val(), $("#offset").val());
+    });
+
+    $('.stock-filter-input').on('change', function() {
+        loadRecords($("#limit").val(), $("#offset").val());
+    });
+    
+    $("#searchQuery, #skuSearchQuery").keyup(function(e){
+        e.preventDefault();
+        if(e.key === 'Enter' || e.keyCode === 13) {
+            var searchType = 'general';
+            if($(this).attr("id")=='skuSearchQuery') searchType = 'sku';
+            loadRecords($("#limit").val(), $("#offset").val(), searchType);
+        }
+    });
+    
+    $(".sortCol").click(function(e){
+        $("#sortCol").val("ORDER BY "+$(this).data("col")+" "+$(this).data("order"));
+        loadRecords($("#limit").val(), $("#offset").val());
+    });
+    
+    <?php require 'php/calculations_script.php'; ?>
+    
+    $("#calculateSellingPrices").click(function(e){
+        e.preventDefault();
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You are going to calculate selling prices!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, calculate it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $("#spinner").show();
+                $.ajax({
+                    url:'php/calculate_selling_prices.php',
+                }).done(function(response){
+                    $("#spinner").hide();
+                    if(response.includes("_done")){
+                        var message = response.replaceAll("_done", "");
+                        Swal.fire(
+                            'Calculated!',
+                            message+' calculated successfully!',
+                            'success'
+                        );
+                        $(".pagination li.page-item.active .recordsPage").click();
+                    } else {
+                        Swal.fire(
+                            'Oops...',
+                            'Something went wrong, please try again.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+  $("#newItemBtn").click(function(e){
+       e.preventDefault();
+       $("#newItemForm")[0].reset();
+       $(".dropDownMenu").trigger("chosen:updated");
+       $(".calculationResult").html("0.00");
+       $("#newItemForm").find(".markupPriceMehtod").show();
+       $("#newItemForm").find(".fixedPriceMethod").hide();
+       $("#newItemPopup").modal('show');
+   });
+   
+   $("#newItemForm").submit(function(e){
+       e.preventDefault();
+       var form = $(this),
+           formData = form.serialize(),
+           validToSubmit = true;
+
+       $.each(form.find(".requiredField"), function(index, value){
+           if($(value).val()==null || $(value).val().length==0){
+               validToSubmit = false;
+           }
+       });
+
+       if(!validToSubmit){
+           Swal.fire(
+               'Oops...',
+               'Name, manufacturer and categorys are required.',
+               'error'
+           );
+           return false;
+       }
+       
+       $("#spinner").show();
+       
+       $.ajax({
+           type:"POST",
+           url:'php/add_new_product.php',
+           data:formData
+       }).done(function(response){
+           $("#spinner").hide();
+           if(response=='added'){
+               Swal.fire(
+                   'Added!',
+                   'Product added successfully.',
+                   'success'
+               );
+               $("#newItemPopup").modal("hide");
+               form[0].reset();
+               $(".pagination li.page-item.active .recordsPage").click();
+               $(".dropDownMenu").trigger("chosen:updated");
+               $(".calculationResult").html("0.00");
+               form.find(".markupPriceMehtod").show();
+               form.find(".fixedPriceMethod").hide();
+               $(".pricing_method").trigger('change');
+           } else {
+               Swal.fire(
+                   'Oops...',
+                   'Something went wrong, please try again.',
+                   'error'
+               );
+           }
+       });
+   });
+   
+   $(document).on('click', '.updateRecord', function(e){
+       e.preventDefault();
+       var recordSKU = $(this).attr("data-sku");
+       $("#spinner").show();
+       $.ajax({
+           type:'POST',
+           url:'php/get_product_details.php',
+           data:{sku:recordSKU}
+       }).done(function(response){
+           $("#spinner").hide();
+           if(response.length>0){
+               $("#updateRecordContent").html(response);
+               $("#updateRecordPopup").modal('show');
+               $(".dropDownMenu").chosen({
+                   width:'100%'
+               });
+               $('#updateRecordPopup').on('shown.bs.modal', function (event) {
+                   $(".pricing_method").trigger("change");
+                   calculations();
+               });
+           } else {
+               Swal.fire(
+                   'Oops...',
+                   'Something went wrong, please try again.',
+                   'error'
+               );
+           }
+       });
+   });
+   
+   $("#exportToMagento").click(function() {
+       var searchQuery = $("#searchQuery").val(),
+           skuSearchQuery = $("#skuSearchQuery").val(),
+           enabledProducts = $("#enabledProducts")[0].checked ? 1 : 0,
+           wwwFilter = $("#wwwFilter")[0].checked ? 1 : 0;
+
+       window.location.href = `php/export_magento.php?searchQuery=${encodeURIComponent(searchQuery)}&skuSearchQuery=${encodeURIComponent(skuSearchQuery)}&enabledProducts=${enabledProducts}&wwwFilter=${wwwFilter}`;
+   });
+   
+   $(document).on("submit", '#updateDetailsForm', function(e){
+       e.preventDefault();
+       var form = $(this),
+           formData = form.serialize(),
+           validToSubmit = true;
+
+       $.each(form.find(".requiredField"), function(index, value){
+           if($(value).val()==null || $(value).val().length==0){
+               validToSubmit = false;
+           }
+       });
+
+       if(!validToSubmit){
+           Swal.fire(
+               'Oops...',
+               'Name, manufacturer and categorys are required.',
+               'error'
+           );
+           return false;
+       }
+       
+       $("#spinner").show();
+       
+       $.ajax({
+           type:"POST",
+           url:'php/update_product_details.php',
+           data:formData
+       }).done(function(response){
+           $("#spinner").hide();
+           if(response=='updated'){
+               Swal.fire(
+                   'Updated!',
+                   'Product updated successfully.',
+                   'success'
+               );
+               $("#updateRecordPopup").modal("hide");
+               $(".pagination li.page-item.active .recordsPage").click();
+           } else {
+               Swal.fire(
+                   'Oops...',
+                   'Something went wrong, please try again.',
+                   'error'
+               );
+           }
+       });
+   });
+
+   // Handle enable/disable toggle
+   $(document).on('change', '.toggle-enable', function() {
+       const sku = $(this).data('sku');
+       const enabled = $(this).prop('checked') ? 'y' : 'n';
+       
+       $.ajax({
+           type: 'POST',
+           url: 'php/update_product_status.php',
+           data: {
+               sku: sku,
+               field: 'enable',
+               value: enabled
+           },
+           success: function(response) {
+               if(response !== 'updated') {
+                   alert('Error updating status');
+                   // Revert checkbox if update failed
+                   $(this).prop('checked', !$(this).prop('checked'));
+               }
+           }
+       });
+   });
+
+   // Handle WWW toggle
+   $(document).on('change', '.toggle-www', function() {
+       const sku = $(this).data('sku');
+       const enabled = $(this).prop('checked') ? 'y' : 'n';
+       
+       $.ajax({
+           type: 'POST',
+           url: 'php/update_product_status.php',
+           data: {
+               sku: sku,
+               field: 'export_to_magento',
+               value: enabled
+           },
+           success: function(response) {
+               if(response !== 'updated') {
+                   alert('Error updating WWW status');
+                   // Revert checkbox if update failed
+                   $(this).prop('checked', !$(this).prop('checked'));
+               }
+           }
+       });
+   });
+   
+   $("#exportToPos").click(function() {
+       var searchQuery = $("#searchQuery").val(),
+           skuSearchQuery = $("#skuSearchQuery").val(),
+           enabledProducts = $("#enabledProducts")[0].checked ? 1 : 0,
+           wwwFilter = $("#wwwFilter")[0].checked ? 1 : 0;
+
+       window.location.href = `./php/export_pos.php?searchQuery=${encodeURIComponent(searchQuery)}&skuSearchQuery=${encodeURIComponent(skuSearchQuery)}&enabledProducts=${enabledProducts}&wwwFilter=${wwwFilter}`;
+   });
+   
+   // Admin columns toggle
+   $('#showAdminColumns').change(function() {
+       $('.table').toggleClass('show-admin-columns');
+   });
+});
+</script>

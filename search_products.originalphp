@@ -1,0 +1,35 @@
+<?php
+require 'php/bootstrap.php';
+
+// Get search query
+$query = $_GET['q'] ?? '';
+
+if (empty($query)) {
+    echo json_encode([]);
+    exit();
+}
+
+// Tokenize the search query
+$tokens = explode(' ', $query);
+$conditions = [];
+$params = [];
+
+// Prepare conditions for each token
+foreach ($tokens as $token) {
+    $likeToken = '%' . $token . '%';
+    $conditions[] = "(name LIKE ? OR manufacturer LIKE ? OR mpn LIKE ? OR ean LIKE ?)";
+    $params = array_merge($params, [$likeToken, $likeToken, $likeToken, $likeToken]);
+}
+
+// Combine conditions with OR
+$whereClause = implode(' AND ', $conditions);
+
+// Perform the query
+$results = $DB->query("
+    SELECT sku, name, manufacturer, mpn, ean
+    FROM master_products
+    WHERE $whereClause
+    LIMIT 10
+", $params);
+
+echo json_encode($results);

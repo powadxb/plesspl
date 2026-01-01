@@ -1,0 +1,206 @@
+<?php
+session_start();
+$page_title = 'View Quote';
+require 'php/bootstrap.php';
+
+// Ensure session is active
+if (!isset($_SESSION['dins_user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$user_id = $_SESSION['dins_user_id'];
+$user_details = $DB->query("SELECT * FROM users WHERE id = ?", [$user_id])[0];
+
+// Check if user has permission for this page
+$has_access = $DB->query(
+    "SELECT has_access FROM user_permissions WHERE user_id = ? AND page = 'pc_quote'", 
+    [$user_id]
+);
+
+if (empty($has_access) || !$has_access[0]['has_access']) {
+    header('Location: no_access.php');
+    exit;
+}
+
+// Get quote ID from URL
+$quote_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if (!$quote_id) {
+    header('Location: pc_quote.php');
+    exit;
+}
+
+// Fetch quote details
+$quote = $DB->query("
+    SELECT q.*, 
+           u.username as created_by_name,
+           u2.username as modified_by_name
+    FROM quotation_master q
+    LEFT JOIN users u ON q.created_by = u.id
+    LEFT JOIN users u2 ON q.modified_by = u2.id
+    WHERE q.id = ?
+", [$quote_id])[0];
+
+// Fetch quote items
+$items = $DB->query("
+    SELECT * 
+    FROM quotation_items 
+    WHERE quote_id = ?
+    ORDER BY line_order
+", [$quote_id]);
+
+require 'assets/header.php';
+require 'assets/navbar.php';
+?>
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h2>Quote #<?php echo $quote_id; ?></h2>
+        </div>
+        <div class="col text-right">
+            <button onclick="window.print()" class="btn btn-primary btn-sm">Print Quote</button>
+            <?php if ($quote['status'] != 'converted'): ?>
+                <button onclick="createOrder(<?php echo $quote_id; ?>)" class="btn btn-success btn-sm">Create Order</button>
+            <?php endif; ?>
+            <a href="pc_quote.php" class="btn btn-secondary btn-sm">New Quote</a>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>Customer Details</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Name:</strong> <?php echo htmlspecialchars($quote['customer_name']); ?></p>
+                    <p><strong>Email:</strong> <?php echo htmlspecialchars($quote['customer_email']); ?></p>
+                    <p><strong>Phone:</strong> <?php echo htmlspecialchars($quote['customer_phone']); ?></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Address:</strong><br><?php echo nl2br(htmlspecialchars($quote['customer_address'])); ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>Quote Details</strong>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>Description</th>
+                            <th class="text-right">Quantity</th>
+                            <th class="text-right">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($items as $item): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($item['product_sku'] ? 'SKU: ' . $item['product_sku'] : 'Manual Entry'); ?></td>
+                                <td><?php echo htmlspecialchars($item['product_name']); ?></td>
+                                <td class="text-right"><?php echo $item['quantity']; ?></td>
+                                <td class="text-right">£<?php echo number_format($item['unit_price'] * (1 + 0.2), 2); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <tr>
+                            <td colspan="3" class="text-right"><strong>Build Charge:</strong></td>
+                            <td class="text-right">£<?php echo number_format($quote['build_charge'], 2); ?></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-right"><strong>Total (Inc. VAT):</strong></td>
+                            <td class="text-right"><strong>£<?php echo number_format($quote['total_price'], 2); ?></strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>Quote Information</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Status:</strong> <?php echo ucfirst($quote['status']); ?></p>
+                    <p><strong>Price Type:</strong> <?php echo $quote['price_type'] == 'R' ? 'Retail' : 'Trade'; ?></p>
+                    <p><strong>Created By:</strong> <?php echo htmlspecialchars($quote['created_by_name']); ?></p>
+                    <p><strong>Created Date:</strong> <?php echo date('d/m/Y H:i', strtotime($quote['date_created'])); ?></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Last Modified By:</strong> <?php echo htmlspecialchars($quote['modified_by_name']); ?></p>
+                    <p><strong>Last Modified Date:</strong> <?php echo date('d/m/Y H:i', strtotime($quote['date_modified'])); ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function createOrder(quoteId) {
+    Swal.fire({
+        title: 'Create Order',
+        text: 'Are you sure you want to create an order from this quote?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, create order',
+        cancelButtonText: 'No, cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: 'ajax/create_order.php',
+                method: 'POST',
+                data: { quoteId: quoteId },
+                success: function(response) {
+                    try {
+                        const result = JSON.parse(response);
+                        if (result.success) {
+                            Swal.fire({
+                                title: 'Success',
+                                text: 'Order created successfully',
+                                icon: 'success'
+                            }).then(() => {
+                                if (result.orderId) {
+                                    window.location.href = `view_order.php?id=${result.orderId}`;
+                                }
+                            });
+                        } else {
+                            throw new Error(result.message || 'Failed to create order');
+                        }
+                    } catch (e) {
+                        Swal.fire('Error', e.message, 'error');
+                    }
+                },
+                error: function() {
+                    Swal.fire('Error', 'Failed to create order', 'error');
+                }
+            });
+        }
+    });
+}
+</script>
+
+<style>
+@media print {
+    .btn, .navbar {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+    }
+    .card-header {
+        background: none !important;
+        border-bottom: 1px solid #ddd !important;
+    }
+}
+</style>
+
+<?php require 'assets/footer.php'; ?>

@@ -1,0 +1,35 @@
+.env
+/vendor/
+/storage/*
+node_modules/
+
+
+# Binaries / images
+*.bmp
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+
+# Logs / temp / junk
+*.log
+*.tmp
+*.bak
+*.zip
+*.7z
+*.rar
+
+# PHP dependencies (if using Composer)
+vendor/
+
+# Secrets
+.env
+/php/bootstrap.php
+/php/Encryption.php
+/secondhand/uploads/*
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/

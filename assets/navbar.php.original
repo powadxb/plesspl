@@ -1,0 +1,222 @@
+<!-- HEADER DESKTOP -->
+<header class="header-desktop3 d-none d-lg-block shadow-sm">
+    <div class="section__content section__content--p35">
+        <div class="header3-wrap">
+            <!-- Logo -->
+            <div class="header__logo">
+                <a href="index.php" class="d-flex align-items-center text-decoration-none">
+                    <h4 class="text-white mb-0 font-weight-bold">
+                        <i class="fas fa-layer-group me-2"></i>
+                        <?=$website_name ?? 'Your Website'?>
+                    </h4>
+                </a>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <div class="header__navbar">
+                <ul class="list-unstyled mb-0">
+                    <li class="has-sub nav-item">
+                        <a href="#" class="nav-link d-flex align-items-center">
+                            <i class="fas fa-store me-2"></i>
+                            Store Operations
+                            <i class="fas fa-chevron-down ms-2 small"></i>
+                        </a>
+                        <ul class="header3-sub-list list-unstyled shadow-lg rounded-3 py-2">
+                            <li>
+                                <a href="courier_log.php" class="d-flex align-items-center px-3 py-2 text-dark hover-highlight">
+                                    <i class="fas fa-truck me-2"></i>
+                                    <span>Courier Log</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="tasks.php" class="d-flex align-items-center px-3 py-2 text-dark hover-highlight">
+                                    <i class="fas fa-tasks me-2"></i>
+                                    <span>Tasks</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="order_list.php" class="d-flex align-items-center px-3 py-2 text-dark hover-highlight">
+                                    <i class="fas fa-shopping-cart me-2"></i>
+                                    <span>Order Stock</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="index.php" class="nav-link d-flex align-items-center">
+                            <i class="fas fa-th-list me-2"></i>
+                            Products Control Panel
+                        </a>
+                    </li>
+                    <?php if ($user_details['admin'] != 0): ?>
+                    <li>
+                        <a href="stock_suppliers.php" class="nav-link d-flex align-items-center">
+                            <i class="fas fa-boxes me-2"></i>
+                            Stock Suppliers
+                        </a>
+                    </li>
+                    <?php endif; ?>
+                    <?php if ($user_details['admin'] == 2): ?>
+                    <li class="has-sub">
+                        <a href="#" class="nav-link d-flex align-items-center">
+                            <i class="fas fa-cogs me-2"></i>
+                            Settings
+                            <i class="fas fa-chevron-down ms-2 small"></i>
+                        </a>
+                        <ul class="header3-sub-list list-unstyled shadow-lg rounded-3 py-2">
+                            <li>
+                                <a href="users.php" class="d-flex align-items-center px-3 py-2 text-dark hover-highlight">
+                                    <i class="fas fa-user-plus me-2"></i>
+                                    <span>Users</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="categories.php" class="d-flex align-items-center px-3 py-2 text-dark hover-highlight">
+                                    <i class="fas fa-sitemap me-2"></i>
+                                    <span>Categories</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="control_panel.php" class="d-flex align-items-center px-3 py-2 text-dark hover-highlight">
+                                    <i class="fas fa-tools me-2"></i>
+                                    <span>Control Panel</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <?php endif; ?>
+                </ul>
+            </div>
+            
+            <!-- Header Tools -->
+            <div class="header__tool">
+                <div class="account-wrap">
+                    <div class="account-item account-item--style2 clearfix js-item-menu">
+                        <div class="image rounded-circle overflow-hidden border border-2 border-white">
+                            <img src="assets/images/icon/avatar.png" alt="User Avatar" class="img-fluid" />
+                        </div>
+                        <div class="content ms-2">
+                            <a class="js-acc-btn text-white text-decoration-none d-flex align-items-center" href="#">
+                                <?=$user_details['username']?>
+                                <i class="fas fa-chevron-down ms-2 small"></i>
+                            </a>
+                        </div>
+                        <div class="account-dropdown js-dropdown shadow-lg rounded-3">
+                            <div class="info clearfix p-3 border-bottom">
+                                <div class="image rounded-circle overflow-hidden border border-2">
+                                    <a href="#">
+                                        <img src="assets/images/icon/avatar.png" alt="User Avatar" class="img-fluid" />
+                                    </a>
+                                </div>
+                                <div class="content ms-2">
+                                    <h5 class="name mb-1">
+                                        <a href="#" class="text-dark"><?=$user_details['username']?></a>
+                                    </h5>
+                                    <span class="email text-muted small"><?=$user_details['email']?></span>
+                                </div>
+                            </div>
+                            <div class="account-dropdown__body p-2">
+                                <div class="account-dropdown__item">
+                                    <a href="#" class="changePassword d-flex align-items-center px-3 py-2 text-dark hover-highlight rounded">
+                                        <i class="zmdi zmdi-password me-2"></i>
+                                        <span>Change Password</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="account-dropdown__footer p-2">
+                                <a href="logout.php" class="d-flex align-items-center px-3 py-2 text-danger hover-highlight rounded">
+                                    <i class="zmdi zmdi-power me-2"></i>
+                                    <span>Logout</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<style>
+.header-desktop3 {
+    background: linear-gradient(135deg, #4a90e2, #2c3e50);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header__navbar ul li a {
+    color: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.header__navbar ul li a:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.header3-sub-list {
+    background: white;
+    min-width: 200px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.hover-highlight:hover {
+    background-color: #f8f9fa;
+    text-decoration: none;
+}
+
+.account-dropdown {
+    background: white;
+    min-width: 280px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.account-item .image {
+    width: 40px;
+    height: 40px;
+}
+
+/* Subtle animation for dropdowns */
+.header3-sub-list, .account-dropdown {
+    transform-origin: top;
+    animation: dropdownFade 0.2s ease;
+}
+
+@keyframes dropdownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile menu improvements */
+.header-mobile {
+    background: linear-gradient(135deg, #4a90e2, #2c3e50);
+}
+
+.hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
+    background-color: white;
+}
+
+.navbar-mobile {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: white;
+}
+
+.navbar-mobile__list li a {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    color: #2c3e50;
+}
+
+.navbar-mobile__list li a i {
+    margin-right: 12px;
+}
+</style>

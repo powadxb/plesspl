@@ -1,0 +1,264 @@
+/* RMA System Styles */
+
+/* Force full width layout */
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.page-content-wrapper {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 auto;
+}
+
+.main-content {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 20px;
+}
+
+/* Override any mobile/sidebar styles */
+.page-layout {
+    display: block;
+    width: 100%;
+}
+
+.category-sidebar {
+    display: none !important; /* No sidebar in RMA system */
+}
+
+.mobile-overlay {
+    display: none !important;
+}
+
+.location-badge {
+    display: inline-block;
+    font-size: 0.8em;
+    margin-left: 10px;
+    padding: 5px 12px;
+    background: #4CAF50;
+    color: white;
+    border-radius: 4px;
+}
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.stat-card > div:first-child {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+/* Quick Entry Modal Styling */
+.form-section {
+    padding: 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.section-title {
+    font-weight: bold;
+    color: #2196F3;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #2196F3;
+}
+
+#quickEntryModal .modal-body {
+    padding: 15px;
+}
+
+#quickEntryModal .form-control-lg {
+    border-width: 2px;
+}
+
+#quickEntryModal .btn {
+    padding: 10px 20px;
+}
+
+.input-group-lg > .form-control {
+    height: calc(2.5em + 1rem + 2px);
+}
+
+/* Table Styling */
+.table-responsive-data2 {
+    overflow-x: auto;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.table {
+    width: 100%;
+    min-width: 800px; /* Ensure minimum width for all columns */
+}
+
+.table td, .table th {
+    vertical-align: middle;
+    white-space: nowrap;
+    padding: 8px;
+}
+
+.table .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Tool section full width */
+.table-data__tool {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.table-data__tool-search {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.table-data__tool-search input {
+    flex: 1;
+}
+
+.table-data__tool-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.table-data__tool-right {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* Status badges */
+.badge {
+    font-size: 0.85em;
+    padding: 0.35em 0.65em;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .table-data__tool-search {
+        flex-direction: column;
+    }
+
+    .table-data__tool-search input,
+    .table-data__tool-search button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .table-data__tool-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .table-data__tool-right {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    /* Allow horizontal scroll on mobile for table */
+    .table-responsive-data2 {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (min-width: 769px) {
+    /* Desktop - ensure full width */
+    .main-content {
+        width: 100% !important;
+        max-width: none !important;
+    }
+    
+    .page-content-wrapper {
+        width: 100% !important;
+    }
+}
+
+/* Loading spinner */
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Alert styling for needs review */
+.text-warning {
+    color: #ff9800 !important;
+}
+
+.fa-exclamation-triangle {
+    margin-left: 5px;
+}
+
+/* Form validation */
+.was-validated .form-control:invalid {
+    border-color: #dc3545;
+}
+
+.was-validated .form-control:valid {
+    border-color: #28a745;
+}
+
+/* Modal enhancements */
+.modal-header {
+    border-bottom: 3px solid rgba(0,0,0,0.1);
+}
+
+.modal-footer {
+    border-top: 3px solid rgba(0,0,0,0.1);
+}
+
+/* Button groups */
+.btn-group-toggle .btn {
+    border: 2px solid #007bff;
+}
+
+.btn-group-toggle .btn.active {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Review items table */
+#reviewItemsList .btn-primary {
+    background-color: #2196F3;
+    border-color: #2196F3;
+}
+
+#reviewItemsList .btn-primary:hover {
+    background-color: #1976D2;
+    border-color: #1976D2;
+}

@@ -1,0 +1,67 @@
+.container {
+    max-width:95% !important;
+  }
+  .updateRecord {
+    cursor:pointer;
+  }
+  table th {
+    padding: .75rem !important;
+    padding-left:.25rem !important;
+    text-transform:capitalize;
+  }
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    width: max-content !important;
+    margin:auto !important;
+    
+  }
+  table .fa-2x {
+    font-size:1.4em !important;
+  }
+  .table-data__tool {
+    margin:auto !important;
+    margin-top:20px;
+  }
+  .table-responsive {
+    margin-top:20px;
+  }
+
+.sortWrap {
+  position:relative;
+  margin-right:8px;
+  display:inline-table;
+}
+.sortIcon {
+  cursor:pointer;
+  display:table-cell
+}
+.sortUp {
+  
+}
+.sortDown {
+  
+}
+
+.whitePlaceholder::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color:#fff !important;
+}
+.whitePlaceholder:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:#fff !important;
+   opacity:1;
+}
+.whitePlaceholder::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:#fff !important;
+   opacity:1;
+}
+.whitePlaceholder:-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color:#fff !important;
+}
+.whitePlaceholder::-ms-input-placeholder { /* Microsoft Edge */
+   color:#fff !important;
+}
+
+.whitePlaceholder::placeholder { /* Most modern browsers support this now. */
+   color:#fff !important;
+}

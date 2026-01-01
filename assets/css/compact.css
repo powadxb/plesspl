@@ -1,0 +1,454 @@
+/* Excel-like Compact Layout Override */
+
+/* Reduce overall page spacing */
+.page-container {
+    max-width: 100%;
+    margin: 0;
+    padding: 8px;
+}
+
+.header-section {
+    background: white;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.header-controls {
+    gap: 8px;
+}
+
+.page-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+    gap: 6px;
+}
+
+.header-buttons {
+    gap: 6px;
+}
+
+/* Compact stats section */
+.stats-section {
+    padding-top: 8px;
+    margin-bottom: 0;
+}
+
+.stat-card {
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.stat-number {
+    font-size: 1.2rem;
+    margin-bottom: 2px;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+}
+
+/* Compact cards */
+.card {
+    margin-bottom: 8px;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+}
+
+.card-header {
+    padding: 6px 12px;
+    background-color: #f8f9fa;
+}
+
+.card-body {
+    padding: 8px 12px;
+}
+
+.card-header h5 {
+    font-size: 0.9rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+/* Compact search form */
+.search-form {
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.search-form .form-group {
+    margin-bottom: 6px;
+}
+
+.search-form .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.search-form label {
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+    font-weight: 600;
+}
+
+.search-form .form-control {
+    height: calc(1.2em + 0.5rem + 2px);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+.search-form .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+/* Ultra compact search results */
+.search-results {
+    max-height: 400px;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+}
+
+.product-item {
+    padding: 6px 8px;
+    border-bottom: 1px solid #f1f3f4;
+    font-size: 0.8rem;
+}
+
+.product-item:hover {
+    background-color: #f8f9fa;
+}
+
+.product-header {
+    margin-bottom: 3px;
+}
+
+.product-title {
+    font-size: 0.85rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.product-sku {
+    padding: 1px 4px;
+    font-size: 0.7rem;
+    border-radius: 2px;
+    margin-left: 6px;
+}
+
+.product-meta {
+    gap: 8px;
+    margin-bottom: 3px;
+    font-size: 0.75rem;
+}
+
+.product-actions {
+    gap: 3px;
+    margin-top: 4px;
+}
+
+.product-actions .btn {
+    padding: 0.15rem 0.3rem;
+    font-size: 0.7rem;
+    line-height: 1.2;
+}
+
+.mapped-info {
+    padding: 2px 4px;
+    font-size: 0.7rem;
+    margin-top: 3px;
+    border-radius: 2px;
+}
+
+/* Ultra compact essential types */
+.essential-types-list {
+    max-height: 400px;
+}
+
+.essential-type-item {
+    padding: 6px 8px;
+    margin-bottom: 4px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.essential-type-header {
+    margin-bottom: 3px;
+}
+
+.essential-type-name {
+    font-size: 0.85rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.essential-type-category {
+    font-size: 0.7rem;
+    padding: 1px 3px;
+    border-radius: 2px;
+}
+
+.essential-type-stats {
+    gap: 8px;
+    font-size: 0.75rem;
+}
+
+.stock-badge {
+    padding: 1px 3px;
+    font-size: 0.7rem;
+    border-radius: 2px;
+}
+
+.mapped-count {
+    font-size: 0.75rem;
+}
+
+/* Compact tables */
+.table {
+    font-size: 0.8rem;
+    margin-bottom: 0;
+}
+
+.table th {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: #f8f9fa;
+    border-top: none;
+}
+
+.table td {
+    padding: 0.3rem 0.4rem;
+    vertical-align: middle;
+    font-size: 0.75rem;
+}
+
+.table-sm th,
+.table-sm td {
+    padding: 0.2rem 0.3rem;
+    font-size: 0.75rem;
+}
+
+/* Compact buttons */
+.btn-sm {
+    padding: 0.15rem 0.3rem;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    border-radius: 0.15rem;
+}
+
+.btn-group-sm > .btn {
+    padding: 0.15rem 0.3rem;
+    font-size: 0.75rem;
+}
+
+/* Compact badges */
+.badge {
+    font-size: 0.7rem;
+    padding: 0.2em 0.4em;
+}
+
+/* Compact form controls */
+.form-control {
+    height: calc(1.2em + 0.5rem + 2px);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+.form-control-sm {
+    height: calc(1.2em + 0.25rem + 2px);
+    padding: 0.125rem 0.25rem;
+    font-size: 0.75rem;
+}
+
+.form-group {
+    margin-bottom: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
+    font-weight: 600;
+}
+
+/* Compact modals */
+.modal-header {
+    padding: 0.5rem 0.75rem;
+}
+
+.modal-body {
+    padding: 0.75rem;
+}
+
+.modal-footer {
+    padding: 0.5rem 0.75rem;
+}
+
+.modal-title {
+    font-size: 1rem;
+}
+
+.modal-lg .modal-body {
+    padding: 0.75rem;
+}
+
+/* Compact product details */
+.product-detail-grid {
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.product-detail-section h6 {
+    font-size: 0.85rem;
+    margin-bottom: 5px;
+    padding-bottom: 2px;
+}
+
+.product-detail-table td {
+    padding: 2px 0;
+    font-size: 0.75rem;
+}
+
+.product-detail-table td:first-child {
+    width: 35%;
+    font-size: 0.75rem;
+}
+
+/* Ultra compact rows */
+.row {
+    margin-left: -4px;
+    margin-right: -4px;
+}
+
+.row > .col,
+.row > [class*="col-"] {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+/* Reduce empty state sizes */
+.empty-state {
+    padding: 20px 10px;
+}
+
+.empty-state i {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.empty-state h5 {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.empty-state p {
+    font-size: 0.8rem;
+}
+
+/* Compact input groups */
+.input-group-append .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+/* Reduce vertical spacing */
+.mt-3, .my-3 {
+    margin-top: 0.5rem !important;
+}
+
+.mb-3, .my-3 {
+    margin-bottom: 0.5rem !important;
+}
+
+.mt-4, .my-4 {
+    margin-top: 0.75rem !important;
+}
+
+.mb-4, .my-4 {
+    margin-bottom: 0.75rem !important;
+}
+
+.py-4 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+}
+
+/* Compact filter section */
+.filter-section .form-control {
+    height: calc(1.2em + 0.5rem + 2px);
+    font-size: 0.8rem;
+}
+
+.filter-section label {
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+    .page-container {
+        padding: 4px;
+    }
+    
+    .header-section {
+        padding: 6px 8px;
+    }
+    
+    .card-body {
+        padding: 6px 8px;
+    }
+    
+    .search-form {
+        padding: 6px;
+    }
+    
+    .product-item {
+        padding: 4px 6px;
+    }
+    
+    .essential-type-item {
+        padding: 4px 6px;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.2rem 0.3rem;
+        font-size: 0.7rem;
+    }
+}
+
+/* Excel-like selection highlighting */
+.product-item:focus,
+.essential-type-item:focus,
+.table tbody tr:hover {
+    background-color: #e3f2fd !important;
+    outline: 1px solid #2196f3;
+    outline-offset: -1px;
+}
+
+/* Compact scrollbars */
+.search-results::-webkit-scrollbar,
+.essential-types-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.search-results::-webkit-scrollbar-track,
+.essential-types-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.search-results::-webkit-scrollbar-thumb,
+.essential-types-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.search-results::-webkit-scrollbar-thumb:hover,
+.essential-types-list::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}

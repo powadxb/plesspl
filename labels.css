@@ -1,0 +1,142 @@
+body {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+.label-container {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 210mm;
+  margin: 0; /* new */
+  padding: 0; /* new */
+  box-sizing: border-box; /* new */
+}
+.placeholder_label-container {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 40mm;
+}
+
+.label {
+  box-sizing: border-box;
+  width: 100mm; /* adjust this if necessary */
+  height: 40mm; /* adjust this if necessary */
+  padding: 5mm; /* adjust this if necessary */
+  border: 1px solid black;
+  position: relative;
+  margin: 0; /* new */
+  page-break-inside: avoid; /* new - avoid labels spanning multiple pages */
+}
+.hanging_label {
+  box-sizing: border-box;
+  width: 70mm;
+  height: 40mm;
+  padding: 5px;
+  border: 1px solid black;
+  position: relative;
+}
+.placeholder_label {
+  box-sizing: border-box;
+  width: 45mm;
+  height: 25mm;
+  padding: 5px;
+  border: 1px solid black;
+  position: relative;
+}
+.sku {
+  font-size: 15px;
+  font-style: bold;
+  position: absolute;
+  padding: 2px;
+  background-color: #000000;
+  color: #ffffff;
+  bottom: 5px;
+  left: 5px;
+}
+.hanging_sku {
+  font-size: 10px;
+  font-style: bold;
+  position: absolute;
+  background-color: #000000;
+  color: #ffffff;
+  bottom: 5px;
+  left: 5px;
+}
+.placeholder_sku {
+  font-size: 10px;
+  font-style: bold;
+  position: absolute;
+  background-color: #000000;
+  color: #ffffff;
+  bottom: 5px;
+  left: 5px;
+}
+.ean {
+  font-size: 14px;
+  font-style: italic;
+  position: absolute;
+  bottom: 5px;
+  left: 90px;
+}
+.hanging_ean {
+  font-size: 10px;
+  font-style: italic;
+  position: absolute;
+  bottom: 5px;
+  left: 90px;
+}
+.placeholder_ean {
+  font-size: 10px;
+  font-style: italic;
+  position: absolute;
+  bottom: 5px;
+  left: 90px;
+}
+
+.name {
+  font-size: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: 1px solid black;
+  width: 90%;
+}
+.hanging_name {
+  font-size: 15px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 90%;
+}
+.placeholder_name {
+  font-size: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 90%;
+}
+.price {
+  font-family: Impact, Arial, sans-serif;
+  font-size: 40px;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+}
+
+.price .pence {
+  font-size: 75%;
+}
+
+.label .price .dot {
+  font-family: Impact, Arial, sans-serif;
+  font-size: 20px;
+  margin-right: 0px;
+}

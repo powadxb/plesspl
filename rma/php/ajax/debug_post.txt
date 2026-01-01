@@ -1,0 +1,40 @@
+2025-11-30 07:55:52
+Array
+(
+    [serial_number] => B-YU-0317000002378
+    [sku] => 12149
+    [product_name] => Blupont SC-1080P-DG-BES CCTV Dome Camera, AHD/CVI/TVI/CVBS, 1/2.7" 2MP CMOS
+    [ean] => 8400800030191
+    [supplier_name] => Netbits UK Ltd
+    [document_id] => 2691
+    [document_number] => 73297
+    [document_date] => 19 June, 2017
+    [cost] => 11.7
+    [needs_review] => 0
+    [fault_type_id] => 2
+    [fault_description] => 
+    [barcode] => 
+    [tracking_number] => DR2
+)
+
+
+2025-11-30 07:56:28
+Array
+(
+    [serial_number] => B-YU-0317000002378
+    [sku] => 12149
+    [product_name] => Blupont SC-1080P-DG-BES CCTV Dome Camera, AHD/CVI/TVI/CVBS, 1/2.7" 2MP CMOS
+    [ean] => 8400800030191
+    [supplier_name] => Netbits UK Ltd
+    [document_id] => 2691
+    [document_number] => 73297
+    [document_date] => 19 June, 2017
+    [cost] => 11.7
+    [needs_review] => 0
+    [fault_type_id] => 2
+    [fault_description] => 
+    [barcode] => 
+    [tracking_number] => DR2
+)
+
+

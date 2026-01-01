@@ -1,0 +1,99 @@
+/* Print-specific settings */
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm; /* Reduced margins to maximize space */
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background: none;
+  }
+}
+
+/* Container for all labels */
+.label-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 labels per row */
+  gap: 5mm; /* Consistent spacing between labels */
+  padding: 0;
+  width: 210mm; /* A4 width */
+  margin: 0 auto;
+}
+
+/* Individual label styling */
+.hanging_label {
+  box-sizing: border-box;
+  width: 95mm; /* Slightly less than half A4 width to account for gap */
+  height: 55mm; /* Standard hanging label height */
+  padding: 3mm;
+  margin: 0;
+  page-break-inside: avoid;
+  break-inside: avoid;
+  
+  /* Crisp text rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Product name styling */
+.name {
+  font-family: Arial, sans-serif;
+  font-size: 12pt;
+  font-weight: bold;
+  line-height: 1.2;
+  margin-bottom: 2mm;
+  max-height: 25mm; /* Prevent overflow */
+  overflow: hidden;
+}
+
+/* SKU and EAN styling */
+.sku, .hanging_ean {
+  font-family: 'Courier New', monospace;
+  font-size: 10pt;
+  line-height: 1.4;
+  margin-bottom: 1mm;
+}
+
+/* Price styling */
+.price {
+  margin-top: 3mm;
+  text-align: right;
+  font-family: Arial, sans-serif;
+}
+
+.pounds {
+  font-size: 16pt;
+  font-weight: bold;
+}
+
+.dot {
+  font-size: 16pt;
+  font-weight: bold;
+}
+
+.pence {
+  font-size: 12pt;
+  font-weight: bold;
+  vertical-align: super;
+}
+
+/* Screen preview styles */
+@media screen {
+  body {
+    background: #f0f0f0;
+    padding: 20px;
+  }
+  
+  .label-container {
+    background: white;
+    padding: 10mm;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  
+  .hanging_label {
+    border: 1px dashed #ccc;
+  }
+}

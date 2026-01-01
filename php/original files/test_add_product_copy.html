@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Add Product</title>
+</head>
+<body>
+    <form action="add_new_product.php" method="POST">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        
+        <label for="manufacturer">Manufacturer:</label><br>
+        <input type="text" id="manufacturer" name="manufacturer"><br>
+        
+        <label for="mpn">MPN:</label><br>
+        <input type="text" id="mpn" name="mpn"><br>
+        
+        <label for="ean">EAN:</label><br>
+        <input type="text" id="ean" name="ean"><br>
+        
+        <label for="categories">Categories:</label><br>
+        <input type="text" id="categories" name="categories" value="1|MainCat|PosCat" required><br>
+        
+        <label for="supplier">Supplier:</label><br>
+        <input type="text" id="supplier" name="supplier"><br>
+        
+        <label for="tax_rate_id">Tax Rate ID:</label><br>
+        <input type="text" id="tax_rate_id" name="tax_rate_id" required><br>
+        
+        <label for="cost">Cost:</label><br>
+        <input type="text" id="cost" name="cost"><br>
+        
+        <label for="pricing_cost">Pricing Cost:</label><br>
+        <input type="text" id="pricing_cost" name="pricing_cost"><br>
+        
+        <label for="pricing_method">Pricing Method:</label><br>
+        <input type="text" id="pricing_method" name="pricing_method" value="1" required><br>
+        
+        <label for="retail_markup">Retail Markup:</label><br>
+        <input type="text" id="retail_markup" name="retail_markup"><br>
+        
+        <label for="trade_markup">Trade Markup:</label><br>
+        <input type="text" id="trade_markup" name="trade_markup"><br>
+        
+        <label for="fixed_retail_pricing">Fixed Retail Pricing:</label><br>
+        <input type="text" id="fixed_retail_pricing" name="fixed_retail_pricing"><br>
+        
+        <label for="fixed_trade_pricing">Fixed Trade Pricing:</label><br>
+        <input type="text" id="fixed_trade_pricing" name="fixed_trade_pricing"><br>
+        
+        <label for="retail_inc_vat">Retail Inc VAT:</label><br>
+        <input type="text" id="retail_inc_vat" name="retail_inc_vat"><br>
+        
+        <label for="trade_inc_vat">Trade Inc VAT:</label><br>
+        <input type="text" id="trade_inc_vat" name="trade_inc_vat"><br>
+        
+        <label for="enable">Enable:</label>
+        <input type="checkbox" id="enable" name="enable"><br>
+        
+        <label for="export_to_magento">Export to Magento:</label>
+        <input type="checkbox" id="export_to_magento" name="export_to_magento"><br>
+        
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
