@@ -1,4 +1,9 @@
 <?php
+// Error logging only (don't display errors as they break JSON)
+error_reporting(E_ALL);
+ini_set('log_errors', 1);
+ini_set('display_errors', 0);
+
 require '../../php/bootstrap.php';
 
 // Load audit logger
@@ -39,8 +44,8 @@ $id = isset($_POST['id']) ? (int)$_POST['id'] : null;
 
 // Get all the form data
 $data = [
-    'preprinted_code' => isset($_POST['preprinted_code']) ? trim($_POST['preprinted_code']) : null,
-    'tracking_code' => isset($_POST['tracking_code']) ? trim($_POST['tracking_code']) : null,
+    'preprinted_code' => !empty(trim($_POST['preprinted_code'] ?? '')) ? trim($_POST['preprinted_code']) : null,
+    'tracking_code' => !empty(trim($_POST['tracking_code'] ?? '')) ? trim($_POST['tracking_code']) : null,
     'item_name' => isset($_POST['item_name']) ? trim($_POST['item_name']) : '',
     '`condition`' => isset($_POST['condition']) ? trim($_POST['condition']) : 'good', // Note the backticks
     'item_source' => isset($_POST['item_source']) ? trim($_POST['item_source']) : 'other',
@@ -65,7 +70,11 @@ $data = [
     'brand' => isset($_POST['brand']) ? trim($_POST['brand']) : null,
     'purchase_document' => isset($_POST['purchase_document']) ? trim($_POST['purchase_document']) : null,
     'status_detail' => isset($_POST['status_detail']) ? trim($_POST['status_detail']) : null,
-    'notes' => isset($_POST['notes']) ? trim($_POST['notes']) : null
+    'notes' => isset($_POST['notes']) ? trim($_POST['notes']) : null,
+    'selling_price' => isset($_POST['selling_price']) && $_POST['selling_price'] !== '' ?
+                      (float)$_POST['selling_price'] : null,
+    'lowest_price' => isset($_POST['lowest_price']) && $_POST['lowest_price'] !== '' ?
+                     (float)$_POST['lowest_price'] : null
 ];
 
 // Generate tracking codes if not provided
@@ -216,6 +225,17 @@ try {
 
     echo json_encode(['success' => true]);
 } catch(Exception $e) {
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    // Log the full error for debugging
+    error_log("Second Hand Item Save Error: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    
+    echo json_encode([
+        'success' => false, 
+        'message' => $e->getMessage(),
+        'debug' => [
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ]
+    ]);
 }
 ?>

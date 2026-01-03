@@ -220,48 +220,14 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
             <div class="step" id="step3-indicator">3</div>
             <div class="step-line"></div>
             <div class="step" id="step4-indicator">4</div>
-            <div class="step-line"></div>
-            <div class="step" id="step5-indicator">5</div>
         </div>
 
-        <!-- Step 1: Staff Authentication -->
+
+        <!-- Step 1: Customer Selection -->
         <div class="step-container active" id="step1">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Step 1: Staff Authentication</h4>
-                </div>
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <h5>Current Staff: <?=$user_details['username']?></h5>
-                        <p>Please confirm your credentials to proceed with the trade-in</p>
-                    </div>
-                    
-                    <div class="row justify-content-center">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="staffUsername" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="staffUsername" value="<?=$user_details['username']?>" readonly>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="staffPassword" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="staffPassword" placeholder="Enter your password to confirm">
-                            </div>
-                            
-                            <div class="d-grid">
-                                <button class="btn btn-primary" id="confirmStaffBtn">Confirm & Proceed</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 2: Customer Selection -->
-        <div class="step-container" id="step2">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Step 2: Customer Information</h4>
+                    <h4 class="card-title">Step 1: Customer Information</h4>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
@@ -309,18 +275,18 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
                     </div>
                     
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <button class="btn btn-secondary" id="prevStep2Btn">Previous</button>
-                        <button class="btn btn-primary" id="nextStep2Btn">Next</button>
+                        <button class="btn btn-secondary" id="prevStep1Btn">Previous</button>
+                        <button class="btn btn-primary" id="nextStep1Btn">Next</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Step 3: ID Verification -->
-        <div class="step-container" id="step3">
+        <!-- Step 2: ID Verification -->
+        <div class="step-container" id="step2">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Step 3: ID Verification</h4>
+                    <h4 class="card-title">Step 2: ID Verification</h4>
                 </div>
                 <div class="card-body">
                     <div class="compliance-section">
@@ -404,18 +370,18 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
                     </div>
                     
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <button class="btn btn-secondary" id="prevStep3Btn">Previous</button>
-                        <button class="btn btn-primary" id="nextStep3Btn">Next</button>
+                        <button class="btn btn-secondary" id="prevStep2Btn">Previous</button>
+                        <button class="btn btn-primary" id="nextStep2Btn">Next</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Step 4: Item Entry -->
-        <div class="step-container" id="step4">
+        <!-- Step 3: Item Entry -->
+        <div class="step-container" id="step3">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Step 4: Item Entry</h4>
+                    <h4 class="card-title">Step 3: Item Entry</h4>
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -438,18 +404,18 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
                     </div>
                     
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                        <button class="btn btn-secondary" id="prevStep4Btn">Previous</button>
-                        <button class="btn btn-primary" id="nextStep4Btn">Review & Save</button>
+                        <button class="btn btn-secondary" id="prevStep3Btn">Previous</button>
+                        <button class="btn btn-primary" id="nextStep3Btn">Review & Save</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Step 5: Save Trade-In -->
-        <div class="step-container" id="step5">
+        <!-- Step 4: Save Trade-In -->
+        <div class="step-container" id="step4">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Step 5: Save Trade-In</h4>
+                    <h4 class="card-title">Step 4: Save Trade-In</h4>
                 </div>
                 <div class="card-body">
                     <div class="text-center mb-4">
@@ -501,7 +467,7 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
                     </div>
                     
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                        <button class="btn btn-secondary" id="prevStep5Btn">Previous</button>
+                        <button class="btn btn-secondary" id="prevStep4Btn">Previous</button>
                         <button class="btn btn-danger" id="cancelTradeInBtn">Cancel</button>
                         <button class="btn btn-success" id="saveTradeInBtn">
                             <i class="fas fa-save"></i> Save Trade-In
@@ -544,6 +510,7 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
     <script>
     $(document).ready(function(){
         // Global variables
+        const userId = <?=(int)$user_id?>;
         let currentStep = 1;
         let itemCounter = 0;
         let currentCameraTarget = null;
@@ -564,7 +531,7 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
             $('#step' + step).addClass('active');
             
             $('.step').removeClass('active completed');
-            for(let i = 1; i <= 5; i++) {
+            for(let i = 1; i <= 4; i++) {
                 if(i < step) {
                     $('#step' + i + '-indicator').addClass('completed');
                 } else if(i === step) {
@@ -576,18 +543,7 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
             window.scrollTo(0, 0);
         }
         
-        // Step 1: Staff Authentication
-        $('#confirmStaffBtn').click(function() {
-            const password = $('#staffPassword').val();
-            if(!password) {
-                Swal.fire('Error', 'Please enter your password', 'error');
-                return;
-            }
-            // For now, just proceed - you can add actual validation if needed
-            goToStep(2);
-        });
-        
-        // Step 2: Customer Search
+        // Step 1: Customer Search
         let searchTimeout;
         $('#customerSearch').on('input', function() {
             clearTimeout(searchTimeout);
@@ -674,12 +630,12 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
             $('#customerPostcode').val('');
         });
         
-        // Step 2 navigation
-        $('#prevStep2Btn').click(function() {
+        // Step 1 navigation
+        $('#prevStep1Btn').click(function() {
             goToStep(1);
         });
         
-        $('#nextStep2Btn').click(function() {
+        $('#nextStep1Btn').click(function() {
             const name = $('#customerName').val().trim();
             if(!name) {
                 Swal.fire('Error', 'Customer name is required', 'error');
@@ -695,10 +651,10 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
                 postcode: $('#customerPostcode').val()
             };
             
-            goToStep(3);
+            goToStep(2);
         });
         
-        // Step 3: ID Verification
+        // Step 2: ID Verification
         function validateIDStep() {
             let hasAtLeastOneID = false;
             
@@ -737,12 +693,12 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
             }
         });
         
-        // Step 3 navigation
-        $('#prevStep3Btn').click(function() {
-            goToStep(2);
+        // Step 2 navigation
+        $('#prevStep2Btn').click(function() {
+            goToStep(1);
         });
         
-        $('#nextStep3Btn').click(function() {
+        $('#nextStep2Btn').click(function() {
             if(!validateIDStep()) {
                 Swal.fire('Error', 'At least ONE form of ID with photo is required', 'error');
                 return;
@@ -768,135 +724,123 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
             
             // Add first item
             addItem();
-            goToStep(4);
+            goToStep(3);
         });
         
-        // Step 4: Item Entry
+        // Step 3: Item Entry
         function addItem() {
-            itemCounter++;
-            
-            // Don't generate tracking codes here - they'll be generated server-side when saving
-            // This prevents showing wrong codes if another trade-in is saved in the meantime
-            
-            const html = `
-                <div class="trade-in-item" id="itemRow${itemCounter}">
-                    <div class="d-flex justify-content-between mb-2">
-                        <h6>Item #${itemCounter}</h6>
-                        <button type="button" class="btn btn-danger btn-sm removeItemBtn" data-item-id="${itemCounter}">
-                            <i class="fas fa-trash"></i> Remove
-                        </button>
-                    </div>
-                    
-                    <!-- No tracking code field - codes generated server-side on save -->
-                    
-                    <!-- Generated code notice (only shown if no preprinted code) -->
-                    <div class="alert alert-info generated-code-display" id="generatedCodeDisplay${itemCounter}" style="display: none; border: 2px solid #2196f3;">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong><i class="fas fa-info-circle"></i> No Barcode Entered</strong>
-                                <p class="mb-0 mt-1"><small>A tracking code will be generated when you save this trade-in</small></p>
-                            </div>
+    itemCounter++;
+    
+    const html = `
+        <div class="trade-in-item mb-3" id="itemRow${itemCounter}" style="border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; background: #f8f9fa;">
+            <div class="row g-2">
+                <!-- Item Number and Remove Button -->
+                <div class="col-12 d-flex justify-content-between align-items-center mb-2" style="border-bottom: 2px solid #dee2e6; padding-bottom: 8px;">
+                    <h6 class="mb-0"><i class="fas fa-box"></i> Item #${itemCounter}</h6>
+                    <button type="button" class="btn btn-danger btn-sm removeItemBtn" data-item-id="${itemCounter}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                
+                <!-- Row 1: Item Name, Brand, Model -->
+                <div class="col-md-5">
+                    <label class="form-label mb-1 small"><strong>Item Name *</strong></label>
+                    <input type="text" class="form-control form-control-sm item-name" data-item-id="${itemCounter}" placeholder="e.g., iPhone 13 Pro" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label mb-1 small">Brand</label>
+                    <input type="text" class="form-control form-control-sm item-brand" data-item-id="${itemCounter}" placeholder="e.g., Apple">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label mb-1 small">Model Number</label>
+                    <input type="text" class="form-control form-control-sm item-model" data-item-id="${itemCounter}" placeholder="e.g., A2483">
+                </div>
+                
+                <!-- Row 2: Category, Serial, Price -->
+                <div class="col-md-4">
+    <label class="form-label mb-1 small">Category</label>
+    <select class="form-select form-select-sm item-category" data-item-id="${itemCounter}">
+        <option value="">Select...</option>
+        <?php foreach($categories as $category): ?>
+        <option value="<?=htmlspecialchars($category['pos_category'])?>"><?=htmlspecialchars($category['pos_category'])?></option>
+        <?php endforeach; ?>
+    </select>
+</div>
+                <div class="col-md-4">
+                    <label class="form-label mb-1 small">Serial Number</label>
+                    <input type="text" class="form-control form-control-sm item-serial" data-item-id="${itemCounter}" placeholder="Optional">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label mb-1 small"><strong>Proposed Value (£) *</strong></label>
+                    <input type="number" class="form-control form-control-sm item-cost" data-item-id="${itemCounter}" step="0.01" min="0" placeholder="0.00" required>
+                </div>
+                
+                <!-- Row 3: Preprinted Barcode (full width, highlighted) -->
+                <div class="col-12">
+                    <div class="p-2" style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 5px;">
+                        <label class="form-label mb-1 small"><strong><i class="fas fa-barcode"></i> PREPRINTED BARCODE (if item has sticker)</strong></label>
+                        <input type="text" class="form-control form-control-sm item-preprinted" data-item-id="${itemCounter}" placeholder="e.g., DSH1, DSH2..." style="font-weight: bold; text-align: center;">
+                        <div class="alert alert-info generated-code-display mt-2 mb-0 p-2" id="generatedCodeDisplay${itemCounter}" style="display: none;">
+                            <small><i class="fas fa-info-circle"></i> A tracking code will be auto-generated when saved</small>
                         </div>
                     </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="row">
-                                <div class="col-md-7">
-                                    <div class="mb-3">
-                                        <label class="form-label">Item Name *</label>
-                                        <input type="text" class="form-control item-name" data-item-id="${itemCounter}" required>
+                </div>
+                
+                <!-- Row 4: Notes and Photos (collapsible) -->
+                <div class="col-12">
+                    <div class="accordion" id="accordion${itemCounter}">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${itemCounter}">
+                                    <small><i class="fas fa-camera"></i> Photos & Notes (Optional)</small>
+                                </button>
+                            </h2>
+                            <div id="collapse${itemCounter}" class="accordion-collapse collapse" data-bs-parent="#accordion${itemCounter}">
+                                <div class="accordion-body p-2">
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <label class="form-label mb-1 small">Notes</label>
+                                            <textarea class="form-control form-control-sm item-notes" data-item-id="${itemCounter}" rows="2" placeholder="Additional details..."></textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label mb-1 small">Photos</label>
+                                            <input type="file" class="form-control form-control-sm item-photo-input" data-item-id="${itemCounter}" multiple accept="image/*">
+                                            <div class="mt-2">
+                                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="openCameraForItem(${itemCounter})">
+                                                    <i class="fas fa-camera"></i> Use Camera
+                                                </button>
+                                            </div>
+                                            <div id="itemPhotoPreview${itemCounter}" class="mt-2 d-flex flex-wrap gap-2"></div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-5">
-                                    <div class="mb-3">
-                                        <label class="form-label">Proposed Value (£) *</label>
-                                        <input type="number" class="form-control item-cost" data-item-id="${itemCounter}" step="0.01" min="0" required>
-                                        <small class="text-muted">Initial offer</small>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Category</label>
-                                        <select class="form-select item-category" data-item-id="${itemCounter}">
-                                            <option value="">Select Category</option>
-                                            <?php foreach($categories as $category): ?>
-                                            <option value="<?=htmlspecialchars($category['pos_category'])?>"><?=htmlspecialchars($category['pos_category'])?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Serial Number</label>
-                                        <input type="text" class="form-control item-serial" data-item-id="${itemCounter}">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label">Notes</label>
-                                <textarea class="form-control item-notes" data-item-id="${itemCounter}" rows="2"></textarea>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <div class="alert alert-warning mb-0 p-3" style="border: 2px solid #ff9800; background-color: #fff3cd;">
-                                    <label class="form-label fw-bold mb-2" style="font-size: 1rem; color: #e65100;">
-                                        <i class="fas fa-barcode"></i> PREPRINTED BARCODE
-                                    </label>
-                                    <input type="text" class="form-control item-preprinted fw-bold" data-item-id="${itemCounter}" placeholder="DSH1, DSH2..." style="border: 2px solid #ff9800; font-size: 1.1rem; text-align: center;">
-                                    <small class="form-text d-block mt-2" style="color: #e65100;">
-                                        <i class="fas fa-info-circle"></i> If item has a barcode sticker, enter it here!
-                                    </small>
-                                </div>
-                            </div>
-                            
-                            
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle"></i> <strong>Note:</strong> Item condition will be assessed during testing phase.
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label">Photos</label>
-                                <div class="photo-upload-area">
-                                    <input type="file" class="form-control item-photo-input" data-item-id="${itemCounter}" accept="image/*" multiple>
-                                    <div class="mt-2">
-                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="openCameraForItem(${itemCounter})">
-                                            <i class="fas fa-camera"></i> Use Camera
-                                        </button>
-                                    </div>
-                                    <div class="photo-preview" id="itemPhotoPreview${itemCounter}"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            `;
-            
-            $('#itemsContainer').append(html);
-            
-            // Bind events for the new item
-            $(`[data-item-id="${itemCounter}"].item-cost`).on('input', calculateTotal);
-            
-            // Toggle generated code display based on preprinted code
-            $(`[data-item-id="${itemCounter}"].item-preprinted`).on('input', function() {
-                const itemId = $(this).data('item-id');
-                const preprintedValue = $(this).val().trim();
-                
-                if (preprintedValue === '') {
-                    // No preprinted code - show generated code
-                    $(`#generatedCodeDisplay${itemId}`).slideDown();
-                } else {
-                    // Has preprinted code - hide generated code
-                    $(`#generatedCodeDisplay${itemId}`).slideUp();
-                }
-            });
+            </div>
+        </div>
+    `;
+    
+    $('#itemsContainer').append(html);
+    
+    // Bind events for the new item
+    $(`[data-item-id="${itemCounter}"].item-cost`).on('input', calculateTotal);
+    
+    // Toggle generated code display based on preprinted code
+    $(`[data-item-id="${itemCounter}"].item-preprinted`).on('input', function() {
+        const itemId = $(this).data('item-id');
+        const preprintedValue = $(this).val().trim();
+        
+        if (preprintedValue === '') {
+            $(`#generatedCodeDisplay${itemId}`).slideDown();
+        } else {
+            $(`#generatedCodeDisplay${itemId}`).slideUp();
         }
+    });
+    
+    calculateTotal();
+}
         
         // Add item button
         $('#addItemBtn').click(function() {
@@ -953,12 +897,12 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
             $('#totalAmount').text('£' + total.toFixed(2));
         }
         
-        // Step 4 navigation
-        $('#prevStep4Btn').click(function() {
-            goToStep(3);
+        // Step 3 navigation
+        $('#prevStep3Btn').click(function() {
+            goToStep(2);
         });
         
-        $('#nextStep4Btn').click(function() {
+        $('#nextStep3Btn').click(function() {
             // Validate items
             let hasItems = false;
             let allItemsValid = true;
@@ -1049,12 +993,13 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
                 const itemId = $(this).find('.item-name').data('item-id');
                 const itemData = {
                     name: $(this).find('.item-name').val(),
+                    brand: $(this).find('.item-brand').val(),
+                    model: $(this).find('.item-model').val(),
                     category: $(this).find('.item-category').val(),
                     serial: $(this).find('.item-serial').val(),
                     notes: $(this).find('.item-notes').val(),
                     preprintedCode: $(this).find('.item-preprinted').val(),
-                    // trackingCode will be generated server-side
-                    condition: null, // Set during testing phase
+                    condition: null,
                     cost: parseFloat($(this).find('.item-cost').val()) || 0,
                     photos: $(this).find('.item-photo-input')[0].files
                 };
@@ -1090,7 +1035,7 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
             itemsHtml += '</div>';
             $('#reviewItemsList').html(itemsHtml);
             
-            goToStep(5);
+            goToStep(4);
         }
         
         // Cancel trade-in
@@ -1110,11 +1055,11 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
             });
         });
         
-        $('#prevStep5Btn').click(function() {
-            goToStep(4);
+        $('#prevStep4Btn').click(function() {
+            goToStep(3);
         });
         
-        // Step 5: Save Trade-In
+        // Step 4: Save Trade-In
         $('#saveTradeInBtn').click(function() {
             const btn = $(this);
             btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
@@ -1262,8 +1207,8 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
             });
         });
         
-        $('#prevStep5Btn').click(function() {
-            goToStep(4);
+        $('#prevStep4Btn').click(function() {
+            goToStep(3);
         });
         
         // Camera functions

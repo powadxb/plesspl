@@ -72,6 +72,14 @@ $can_view_all_locations = !empty($all_locations_check) && $all_locations_check[0
 // Get all categories for the form
 $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WHERE pos_category IS NOT NULL AND pos_category != '' ORDER BY pos_category ASC");
 ?>
+<script>
+// Permission flags - available globally in JavaScript
+const can_view_seller = <?php echo $can_view_seller ? 'true' : 'false'; ?>;
+const can_view_financial = <?php echo $can_view_financial ? 'true' : 'false'; ?>;
+const can_view_documents = <?php echo $can_view_documents ? 'true' : 'false'; ?>;
+const can_manage = <?php echo $can_manage ? 'true' : 'false'; ?>;
+const user_location = '<?php echo $effective_location; ?>';
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -267,6 +275,32 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
             margin-bottom: 1rem;
             border-radius: 4px;
         }
+        /* Pricing Highlight Box */
+        .pricing-highlight-box {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border: 3px solid #fdcb6e;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(253, 203, 110, 0.3);
+        }
+        .pricing-highlight-box label {
+            color: #2d3436;
+            font-weight: 700;
+        }
+        .pricing-highlight-box .form-control {
+            border: 2px solid #fff;
+            background: #fff;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .pricing-highlight-box .form-control:focus {
+            border-color: #e17055;
+            box-shadow: 0 0 0 0.2rem rgba(253, 203, 110, 0.25);
+        }
+        .pricing-highlight-box small {
+            color: #2d3436;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -366,6 +400,7 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
                             <th>Category</th>
                             <th>Condition</th>
                             <th>Source</th>
+                            <th>Selling £</th>
                             <th>Status</th>
                             <?php if ($can_view_financial): ?>
                             <th>Purchase £</th>
@@ -377,7 +412,7 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
                     </thead>
                     <tbody id="itemsList">
                         <tr>
-                            <td colspan="<?= 14 + ($can_view_financial ? 2 : 0) ?>" class="text-center">
+                            <td colspan="<?= 15 + ($can_view_financial ? 2 : 0) ?>" class="text-center">
                                 <i class="fas fa-spinner fa-spin me-2"></i> Loading items...
                             </td>
                         </tr>
@@ -451,11 +486,14 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
                             <div class="col-md-3">
                                 <label class="form-label">Source *</label>
                                 <select class="form-select" id="itemSource" name="item_source" required <?= !$can_manage ? 'disabled' : '' ?>>
+                                    <option value="">Select Source</option>
                                     <option value="trade_in">Trade-In</option>
                                     <option value="donation">Donation</option>
+                                    <option value="abandoned">Customer Abandoned Item</option>
                                     <option value="purchase">Purchase</option>
-                                    <option value="abandoned">Abandoned</option>
-                                    <option value="parts_dismantle">Parts (Dismantle)</option>
+                                    <option value="parts_dismantle">Parts/Salvage</option>
+                                    <option value="stock_transfer">Stock Transfer</option>
+                                    <option value="returned_item">Returned Item</option>
                                     <option value="other">Other</option>
                                 </select>
                             </div>
@@ -473,6 +511,26 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
                                     <option value="cs">Commerce Street</option>
                                     <option value="as">Argyle Street</option>
                                 </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Pricing Section - Highlighted (Visible to all) -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="pricing-highlight-box">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="form-label"><i class="fas fa-tag me-1"></i><strong>Selling Price (£) *</strong></label>
+                                            <input type="number" class="form-control" id="sellingPrice" name="selling_price" step="0.01" min="0" placeholder="Asking price" <?= !$can_manage ? 'readonly' : '' ?>>
+                                            <small class="text-muted">The asking price shown to customers</small>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label"><i class="fas fa-hand-holding-usd me-1"></i><strong>Lowest Price (£)</strong></label>
+                                            <input type="number" class="form-control" id="lowestPrice" name="lowest_price" step="0.01" min="0" placeholder="Minimum negotiation price" <?= !$can_manage ? 'readonly' : '' ?>>
+                                            <small class="text-muted">Minimum price staff can negotiate to</small>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
@@ -729,7 +787,7 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
             const tbody = $('#itemsList');
             
             if (items.length === 0) {
-                const colspan = <?= 14 + ($can_view_financial ? 2 : 0) ?>;
+                const colspan = <?= 15 + ($can_view_financial ? 2 : 0) ?>;
                 tbody.html(`<tr><td colspan="${colspan}" class="text-center py-4">
                     <i class="fas fa-inbox fa-2x text-muted mb-2"></i><br>
                     No items found
@@ -753,6 +811,7 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
                         <td>${item.category || '-'}</td>
                         <td>${item.condition || '-'}</td>
                         <td>${item.item_source || '-'}</td>
+                        <td>${item.selling_price ? '£' + parseFloat(item.selling_price).toFixed(2) : '-'}</td>
                         <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
                         <?php if ($can_view_financial): ?>
                         <td>£${parseFloat(item.purchase_price || 0).toFixed(2)}</td>
@@ -801,11 +860,18 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
             // Hide all buttons initially
             $('#editBtn, #saveBtn, #cancelBtn').hide();
             
+            // Enable all source options first
+            $('#itemSource option').prop('disabled', false);
+            
             if (addMode && canManage) {
                 // New item - start in edit mode
                 $('#itemModalLabel').text('Add New Item');
                 $('#itemLocation').val('<?=$effective_location?>');
                 $('#acquisitionDate').val('<?=date('Y-m-d')?>');
+                
+                // Disable "Trade-In" option for new items (must use trade-in workflow)
+                $('#itemSource option[value="trade_in"]').prop('disabled', true);
+                
                 toggleEditMode(true);
             } else if (item) {
                 // Viewing existing item - start in view mode
@@ -849,6 +915,10 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
             $('#warrantyInfo').val(item.warranty_info);
             $('#supplierInfo').val(item.supplier_info);
             
+            // Pricing fields (visible to all)
+            $('#sellingPrice').val(item.selling_price);
+            $('#lowestPrice').val(item.lowest_price);
+            
             <?php if ($can_view_financial): ?>
             $('#purchasePrice').val(item.purchase_price);
             $('#estimatedValue').val(item.estimated_value);
@@ -882,22 +952,38 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
                 // Save original form data for cancel
                 originalFormData = $('#itemForm').serializeArray();
                 
+                const isExistingItem = $('#itemId').val() !== '';
+                const hasPreprintedCode = $('#preprintedCode').val() !== '';
+                
                 // Enable editing
                 $('#itemForm input:not(#trackingCode):not(#itemId), #itemForm select, #itemForm textarea')
                     .prop('readonly', false)
                     .prop('disabled', false);
                 
+                // For existing items, keep source, seller fields, and acquisition date readonly (they cannot be changed)
+                if (isExistingItem) {
+                    $('#itemSource, #acquisitionDate').prop('readonly', true).prop('disabled', true);
+                    <?php if ($can_view_seller): ?>
+                    $('#sellerName, #sellerContact, #sellerId').prop('readonly', true).prop('disabled', true);
+                    <?php endif; ?>
+                }
+                
+                // If preprinted code is already set, it cannot be changed
+                if (hasPreprintedCode) {
+                    $('#preprintedCode').prop('readonly', true).prop('disabled', true);
+                }
+                
                 // Show Save/Cancel, hide Edit
                 $('#editBtn').hide();
                 $('#saveBtn, #cancelBtn').show();
             } else {
-                // Disable editing
-                $('#itemForm input, #itemForm select, #itemForm textarea')
+                // Disable editing (but never disable itemId as it needs to be submitted)
+                $('#itemForm input:not(#itemId), #itemForm select, #itemForm textarea')
                     .prop('readonly', true)
                     .prop('disabled', true);
                 
-                // Always keep tracking code and item ID readonly
-                $('#trackingCode, #itemId').prop('readonly', true);
+                // Always keep tracking code and item ID readonly (but not disabled)
+                $('#trackingCode, #itemId').prop('readonly', true).prop('disabled', false);
                 
                 // Show Edit, hide Save/Cancel
                 $('#editBtn').show();
@@ -922,6 +1008,13 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
                 return;
             }
             
+            // Validate preprinted code format if provided
+            const preprintedCode = $('#preprintedCode').val().trim();
+            if (preprintedCode && !preprintedCode.toUpperCase().startsWith('DSH')) {
+                Swal.fire('Error', 'Preprinted code must start with "DSH"', 'error');
+                return;
+            }
+            
             const formData = $('#itemForm').serialize();
             
             Swal.fire({
@@ -936,6 +1029,7 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
                 url: 'php/save_second_hand_item.php',
                 method: 'POST',
                 data: formData,
+                dataType: 'json',
                 success: function(response) {
                     if (response.success) {
                         Swal.fire('Success', 'Item saved successfully', 'success');
@@ -947,7 +1041,25 @@ $categories = $DB->query("SELECT DISTINCT pos_category FROM master_categories WH
                 },
                 error: function(xhr, status, error) {
                     console.error('Save error:', error);
-                    Swal.fire('Error', 'Failed to save item', 'error');
+                    console.error('Response:', xhr.responseText);
+                    
+                    let errorMessage = 'Failed to save item';
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.message) {
+                            errorMessage = response.message;
+                        }
+                        if (response.debug) {
+                            console.error('Debug info:', response.debug);
+                            errorMessage += '\n\nDebug: ' + response.debug.file + ' on line ' + response.debug.line;
+                        }
+                    } catch(e) {
+                        // If response is not JSON, show raw response
+                        console.error('Raw response:', xhr.responseText);
+                        errorMessage = xhr.responseText.substring(0, 500);
+                    }
+                    
+                    Swal.fire('Error', errorMessage, 'error');
                 }
             });
         }

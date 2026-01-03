@@ -25,49 +25,55 @@ if(!$can_import_trade_ins) {
     exit();
 }
 
-// Get trade-in item ID
-$trade_in_id = isset($_POST['trade_in_id']) ? (int)$_POST['trade_in_id'] : 0;
+// Get trade-in ITEM DETAIL ID (not the parent trade_in_id)
+$item_detail_id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
 
-if (!$trade_in_id) {
-    echo json_encode(['success' => false, 'message' => 'Trade-in ID is required']);
-    exit();
-}
-
-// Get the trade-in item details
-$trade_in_item = $DB->query("SELECT * FROM trade_in_items WHERE id = ?", [$trade_in_id])[0];
-
-if (!$trade_in_item) {
-    echo json_encode(['success' => false, 'message' => 'Trade-in item not found']);
-    exit();
-}
-
-// Check if this trade-in item has already been imported
-$existing = $DB->query("SELECT id FROM second_hand_items WHERE trade_in_reference = ?", [$trade_in_item['trade_in_reference']]);
-
-if (!empty($existing)) {
-    echo json_encode(['success' => false, 'message' => 'This trade-in item has already been imported']);
+if (!$item_detail_id) {
+    echo json_encode(['success' => false, 'message' => 'Item ID is required']);
     exit();
 }
 
 try {
-    // Generate tracking codes for the second-hand item
-    $tracking_result = $DB->query("
-        SELECT COALESCE(MAX(CAST(SUBSTRING(tracking_code, 3) AS UNSIGNED)), 0) + 1 AS next_number
-        FROM second_hand_items
-        WHERE tracking_code LIKE 'SH%'
-    ");
-    $next_tracking_number = $tracking_result[0]['next_number'] ?? 1;
-    $tracking_code = 'SH' . $next_tracking_number;
+    // Get the item details from trade_in_items_details
+    $item = $DB->query("SELECT * FROM trade_in_items_details WHERE id = ?", [$item_detail_id])[0];
+    
+    if (!$item) {
+        echo json_encode(['success' => false, 'message' => 'Item not found']);
+        exit();
+    }
+    
+    // Get the parent trade-in record for customer information
+    $trade_in = $DB->query("SELECT * FROM trade_in_items WHERE id = ?", [$item['trade_in_id']])[0];
+    
+    if (!$trade_in) {
+        echo json_encode(['success' => false, 'message' => 'Trade-in record not found']);
+        exit();
+    }
 
-    $preprinted_result = $DB->query("
-        SELECT COALESCE(MAX(CAST(SUBSTRING(preprinted_code, 4) AS UNSIGNED)), 0) + 1 AS next_number
-        FROM second_hand_items
-        WHERE preprinted_code LIKE 'DSH%'
-    ");
-    $next_preprinted_number = $preprinted_result[0]['next_number'] ?? 1;
-    $preprinted_code = 'DSH' . $next_preprinted_number;
+    // Check if this item has already been imported
+    $existing = $DB->query("SELECT id FROM second_hand_items WHERE tracking_code = ?", [$item['tracking_code']]);
+    
+    if (!empty($existing)) {
+        echo json_encode(['success' => false, 'message' => 'This item has already been imported (tracking code: ' . $item['tracking_code'] . ')']);
+        exit();
+    }
 
-    // Determine user's location for location-based restrictions
+    // Generate preprinted code if needed
+    $preprinted_code = $item['preprinted_code'];
+    if (empty($preprinted_code)) {
+        $preprinted_result = $DB->query("
+            SELECT COALESCE(MAX(CAST(SUBSTRING(preprinted_code, 4) AS UNSIGNED)), 0) + 1 AS next_number
+            FROM second_hand_items
+            WHERE preprinted_code LIKE 'DSH%'
+        ");
+        $next_preprinted_number = $preprinted_result[0]['next_number'] ?? 1;
+        $preprinted_code = 'DSH' . $next_preprinted_number;
+    }
+
+    // Use existing tracking code from item
+    $tracking_code = $item['tracking_code'];
+
+    // Determine user's location
     $effective_location = $user_details['user_location'];
     if(!empty($user_details['temp_location']) &&
        !empty($user_details['temp_location_expires']) &&
@@ -75,7 +81,7 @@ try {
         $effective_location = $user_details['temp_location'];
     }
 
-    // Import the trade-in item to second-hand inventory
+    // Import the item to second-hand inventory
     $query = "INSERT INTO second_hand_items (
         preprinted_code,
         tracking_code,
@@ -101,46 +107,66 @@ try {
         purchase_document,
         status_detail,
         notes,
-        trade_in_reference
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        trade_in_reference,
+        created_by
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $params = [
-        $preprinted_code, // preprinted_code
-        $tracking_code, // tracking_code
-        $trade_in_item['item_name'],
-        $trade_in_item['condition_rating'],
+        $preprinted_code,
+        $tracking_code,
+        $item['item_name'],
+        $item['condition'],
         'trade_in',
-        $trade_in_item['serial_number'],
-        'in_stock', // status
-        $trade_in_item['purchase_price'],
-        $trade_in_item['purchase_price'] * 1.2, // estimated sale price (20% markup as example)
-        $trade_in_item['purchase_price'], // estimated value same as purchase price
-        $trade_in_item['customer_id'],
-        $trade_in_item['customer_name'] ?? null,
-        $trade_in_item['customer_phone'] ?? null, // customer contact
-        $trade_in_item['category'],
-        'Traded in item - ' . $trade_in_item['condition_rating'], // detailed_condition
-        $effective_location, // location - use user's location
-        $trade_in_item['trade_in_date'],
+        $item['serial_number'],
+        'in_stock',
+        $item['price_paid'],
+        $item['price_paid'] * 1.2, // estimated sale price (20% markup)
+        $item['price_paid'], // estimated value
+        null, // customer_id - not used
+        $trade_in['customer_name'], // FROM parent trade_in record
+        $trade_in['customer_phone'], // FROM parent trade_in record
+        $item['category'],
+        $item['notes'], // detailed_condition
+        $trade_in['location'] ?: $effective_location, // location from trade-in or user location
+        $trade_in['collection_date'] ?: date('Y-m-d'), // acquisition_date from trade-in
         null, // warranty_info
         null, // supplier_info
         null, // model_number
         null, // brand
-        $trade_in_item['trade_in_reference'],
+        null, // purchase_document
         null, // status_detail
-        $trade_in_item['notes'],
-        $trade_in_item['trade_in_reference']
+        $item['notes'], // notes
+        $item['trade_in_id'], // trade_in_reference
+        $user_id
     ];
 
     $DB->query($query, $params);
+    $second_hand_id = $DB->lastInsertId();
+
+    // Log the import
+    if ($DB->query("SHOW TABLES LIKE 'second_hand_audit_log'")) {
+        $log_sql = "INSERT INTO second_hand_audit_log (user_id, item_id, action, action_details)
+                    VALUES (?, ?, 'import_trade_in_to_second_hand', ?)";
+        $log_details = json_encode([
+            'imported_by' => $user_id,
+            'imported_at' => date('Y-m-d H:i:s'),
+            'trade_in_detail_id' => $item_detail_id,
+            'second_hand_id' => $second_hand_id,
+            'item_name' => $item['item_name']
+        ]);
+        $DB->query($log_sql, [$user_id, $second_hand_id, $log_details]);
+    }
 
     echo json_encode([
         'success' => true,
-        'message' => 'Trade-in item successfully imported to second-hand inventory',
+        'message' => 'Item successfully imported to second-hand inventory',
         'tracking_code' => $tracking_code,
-        'preprinted_code' => $preprinted_code
+        'preprinted_code' => $preprinted_code,
+        'customer_name' => $trade_in['customer_name']
     ]);
+
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => 'Error importing trade-in item: ' . $e->getMessage()]);
+    error_log("Error importing trade-in item: " . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => 'Error importing item: ' . $e->getMessage()]);
 }
 ?>

@@ -252,6 +252,12 @@ try {
         
         $item_notes = $_POST['item_notes_' . $i] ?? '';
         $item_notes = empty($item_notes) ? null : $item_notes;
+
+        $item_brand = $_POST['item_brand_' . $i] ?? '';
+$item_brand = empty($item_brand) ? null : $item_brand;
+
+$item_model = $_POST['item_model_' . $i] ?? '';
+$item_model = empty($item_model) ? null : $item_model;
         
         // IMPORTANT: Convert empty strings to NULL for UNIQUE constraint fields
         $item_preprinted = $_POST['item_preprinted_' . $i] ?? '';
@@ -286,17 +292,18 @@ try {
         error_log("Inserting item $i: name=$item_name, preprinted=" . ($item_preprinted ?? 'NULL') . ", tracking=" . ($item_tracking ?? 'NULL'));
         
         // Insert item
-        $sql = "INSERT INTO trade_in_items_details (
-                    trade_in_id, item_name, category, serial_number,
-                    `condition`, price_paid, notes, preprinted_code,
-                    tracking_code, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
-        
-        $DB->query($sql, [
-            $trade_in_id, $item_name, $item_category, $item_serial,
-            $item_condition, $item_cost, $item_notes, $item_preprinted,
-            $item_tracking
-        ]);
+        // Insert item
+$sql = "INSERT INTO trade_in_items_details (
+            trade_in_id, item_name, category, brand, model_number, serial_number,
+            `condition`, price_paid, notes, preprinted_code,
+            tracking_code, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+
+$DB->query($sql, [
+    $trade_in_id, $item_name, $item_category, $item_brand, $item_model, $item_serial,
+    $item_condition, $item_cost, $item_notes, $item_preprinted,
+    $item_tracking
+]);
         
         $item_detail_id = $DB->lastInsertId();
         

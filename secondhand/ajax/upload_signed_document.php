@@ -115,28 +115,35 @@ try {
             }
             
             // Insert into second_hand_items
-            $sql = "INSERT INTO second_hand_items (
-                        trade_in_reference, trade_in_item_detail_id,
-                        item_name, category, serial_number,
-                        `condition`, purchase_price, 
-                        location, status, item_source,
-                        notes, preprinted_code, tracking_code,
-                        created_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'in_stock', 'trade_in', ?, ?, ?, NOW())";
-            
-            $DB->query($sql, [
-                $trade_in['trade_in_reference'],
-                $item['id'],
-                $item['item_name'],
-                $item['category'],
-                $item['serial_number'],
-                $item['condition'],
-                $item['price_paid'],
-                $trade_in['location'],
-                $item['notes'],
-                $preprinted_code,
-                $tracking_code
-            ]);
+           $sql = "INSERT INTO second_hand_items (
+            trade_in_reference, trade_in_item_detail_id,
+            item_name, category, brand, model_number, serial_number,
+            `condition`, purchase_price, 
+            customer_id, customer_name, customer_contact,
+            location, acquisition_date, status, item_source,
+            notes, preprinted_code, tracking_code,
+            created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'in_stock', 'trade_in', ?, ?, ?, NOW())";
+
+$DB->query($sql, [
+    $trade_in['trade_in_reference'],
+    $item['id'],
+    $item['item_name'],
+    $item['category'],
+    $item['brand'],
+    $item['model_number'],
+    $item['serial_number'],
+    $item['condition'],
+    $item['price_paid'],
+    null, // customer_id
+    $trade_in['customer_name'],
+    $trade_in['customer_phone'],
+    $trade_in['location'],
+    $trade_in['collection_date'] ?: date('Y-m-d'),
+    $item['notes'],
+    $preprinted_code,
+    $tracking_code
+]);
             
             $items_moved++;
         }

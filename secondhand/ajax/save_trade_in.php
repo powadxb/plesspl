@@ -196,16 +196,16 @@ try {
         $sql = "INSERT INTO second_hand_items (
                     preprinted_code, tracking_code, item_name, `condition`, item_source,
                     serial_number, status, purchase_price, estimated_value, estimated_sale_price,
-                    customer_name, customer_contact, category, detailed_condition, location,
+                    customer_id, customer_name, customer_contact, category, detailed_condition, location,
                     acquisition_date, warranty_info, supplier_info, model_number, brand,
                     notes, trade_in_reference, created_by
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $params = [
             $preprinted_code, $tracking_code, $item_name, $condition, 'trade_in',
             $serial_number, 'in_stock', $offered_price, $offered_price, $offered_price,
-            $customer_name, $customer_phone, $category, $detailed_condition, $location,
-            date('Y-m-d'), null, null, $model_number, $brand,
+            null, $customer_name, $customer_phone, $category, $detailed_condition, $location,
+            $collection_date, null, null, $model_number, $brand,
             $notes, $new_id, $user_id
         ];
 
