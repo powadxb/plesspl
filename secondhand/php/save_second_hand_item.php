@@ -52,7 +52,7 @@ $data = [
     'serial_number' => isset($_POST['serial_number']) ? trim($_POST['serial_number']) : null,
     'status' => isset($_POST['status']) ? trim($_POST['status']) : 'in_stock',
     'purchase_price' => isset($_POST['purchase_price']) && $_POST['purchase_price'] !== '' ?
-                       (float)$_POST['purchase_price'] : null,
+                       (float)$_POST['purchase_price'] : 0,
     'estimated_sale_price' => isset($_POST['estimated_sale_price']) && $_POST['estimated_sale_price'] !== '' ?
                              (float)$_POST['estimated_sale_price'] : null,
     'estimated_value' => isset($_POST['estimated_value']) && $_POST['estimated_value'] !== '' ?
@@ -100,6 +100,32 @@ if (empty($data['tracking_code']) && empty($data['preprinted_code'])) {
 // Validate required fields
 if(empty($data['item_name'])) {
     echo json_encode(['success' => false, 'message' => 'Item name is required']);
+    exit;
+}
+
+// Validate source is selected
+if(empty($data['item_source'])) {
+    echo json_encode(['success' => false, 'message' => 'Source must be selected']);
+    exit;
+}
+
+// Validate source details for sources that require them
+$sources_requiring_details = ['ebay', 'purchase', 'stock_transfer', 'returned_item'];
+if(in_array($data['item_source'], $sources_requiring_details) && empty($data['supplier_info'])) {
+    $source_labels = [
+        'ebay' => 'eBay Item Number',
+        'purchase' => 'Supplier Name',
+        'stock_transfer' => 'Transfer Reference',
+        'returned_item' => 'Return Reference'
+    ];
+    $field_name = $source_labels[$data['item_source']] ?? 'Source details';
+    echo json_encode(['success' => false, 'message' => "{$field_name} is required for this source type"]);
+    exit;
+}
+
+// Validate purchase price is provided (can be 0 but not null/empty)
+if(!isset($_POST['purchase_price']) || $_POST['purchase_price'] === '') {
+    echo json_encode(['success' => false, 'message' => 'Purchase price is required (can be £0.00)']);
     exit;
 }
 
@@ -223,7 +249,10 @@ try {
         }
     }
 
-    echo json_encode(['success' => true]);
+    echo json_encode([
+        'success' => true,
+        'tracking_code' => $data['tracking_code']
+    ]);
 } catch(Exception $e) {
     // Log the full error for debugging
     error_log("Second Hand Item Save Error: " . $e->getMessage());

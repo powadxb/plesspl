@@ -301,6 +301,199 @@ const user_location = '<?php echo $effective_location; ?>';
             color: #2d3436;
             font-weight: 500;
         }
+        /* Tracking Code Section */
+        .tracking-code-section {
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe6cc 100%);
+            padding: 20px;
+            border-radius: 8px;
+            border: 3px solid #ff9800;
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
+        }
+        .tracking-code-section h6 {
+            color: #e65100;
+            font-weight: 700;
+        }
+        .preprinted-highlight {
+            border: 3px solid #ff9800 !important;
+            background-color: #fff8e1;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .preprinted-highlight:focus {
+            border-color: #f57c00 !important;
+            box-shadow: 0 0 0 0.25rem rgba(255, 152, 0, 0.25) !important;
+        }
+        
+        /* Required field highlighting */
+        .required-field {
+            border-left: 3px solid #667eea;
+        }
+        #sourceDetailsRow {
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+        
+        /* Wizard Progress Indicator */
+        .wizard-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0 -10px;
+            padding: 0;
+        }
+        .wizard-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            opacity: 0.5;
+        }
+        .wizard-step.active {
+            opacity: 1;
+        }
+        .wizard-step.completed {
+            opacity: 0.8;
+        }
+        .wizard-step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        .wizard-step.active .wizard-step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.1);
+        }
+        .wizard-step.completed .wizard-step-number {
+            background: #48bb78;
+            color: white;
+        }
+        .wizard-step-label {
+            font-size: 0.75rem;
+            color: #718096;
+            font-weight: 500;
+        }
+        .wizard-step.active .wizard-step-label {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        /* Stage Headers */
+        .stage-header {
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+        .stage-header h6 {
+            color: #2d3748;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        /* Wizard Stages */
+        .wizard-stage {
+            min-height: 300px;
+        }
+        
+        /* Photo Upload Section */
+        .photo-upload-section {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .camera-section, .file-upload-section {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 2px dashed #cbd5e0;
+        }
+        .camera-preview {
+            background: #000;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+            max-width: 100%;
+        }
+        .camera-preview video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .camera-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        /* Photo Grid */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .photo-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            border: 2px solid #e2e8f0;
+            aspect-ratio: 1;
+        }
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .photo-item-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .photo-item-remove:hover {
+            background: #c53030;
+            transform: scale(1.1);
+        }
+        
+        /* Pricing Box */
+        .pricing-box {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+        
+        /* Wizard Navigation */
+        .wizard-navigation {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* Wide SweetAlert for tracking code display */
+        .swal-wide {
+            width: 600px !important;
+        }
     </style>
 </head>
 <body>
@@ -422,12 +615,37 @@ const user_location = '<?php echo $effective_location; ?>';
         </div>
     </div>
 
-    <!-- Item Details/Edit Modal -->
+    <!-- Item Details/Edit Modal - Multi-Stage Wizard -->
     <div class="modal fade" id="itemModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="itemModalLabel">Item Details</h5>
+                    <div class="w-100">
+                        <h5 class="modal-title" id="itemModalLabel">Add New Item</h5>
+                        <!-- Progress Indicator -->
+                        <div class="wizard-progress mt-3" id="wizardProgress">
+                            <div class="wizard-step active" data-step="1">
+                                <div class="wizard-step-number">1</div>
+                                <div class="wizard-step-label">Essential Info</div>
+                            </div>
+                            <div class="wizard-step" data-step="2">
+                                <div class="wizard-step-number">2</div>
+                                <div class="wizard-step-label">Product Details</div>
+                            </div>
+                            <div class="wizard-step" data-step="3">
+                                <div class="wizard-step-number">3</div>
+                                <div class="wizard-step-label">Pricing</div>
+                            </div>
+                            <div class="wizard-step" data-step="4">
+                                <div class="wizard-step-number">4</div>
+                                <div class="wizard-step-label">Photos</div>
+                            </div>
+                            <div class="wizard-step" data-step="5">
+                                <div class="wizard-step-number">5</div>
+                                <div class="wizard-step-label">Additional</div>
+                            </div>
+                        </div>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -441,230 +659,260 @@ const user_location = '<?php echo $effective_location; ?>';
                     <form id="itemForm" class="compact-form">
                         <input type="hidden" id="itemId" name="id">
                         
-                        <!-- Basic Information -->
-                        <div class="row">
-                            <div class="col-md-8">
-                                <label class="form-label">Item Name *</label>
-                                <input type="text" class="form-control" id="itemName" name="item_name" required <?= !$can_manage ? 'readonly' : '' ?>>
+                        <!-- STAGE 1: Essential Information (Required Fields) -->
+                        <div class="wizard-stage" id="stage1" style="display: block;">
+                            <div class="stage-header">
+                                <h6><i class="fas fa-exclamation-circle me-2"></i>Required Information</h6>
+                                <p class="text-muted mb-3">All fields on this page are required</p>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Category</label>
-                                <select class="form-select" id="itemCategory" name="category" <?= !$can_manage ? 'disabled' : '' ?>>
-                                    <option value="">Select Category</option>
-                                    <?php foreach($categories as $category): ?>
-                                    <option value="<?=htmlspecialchars($category['pos_category'])?>"><?=htmlspecialchars($category['pos_category'])?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                            
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label class="form-label">Item Name *</label>
+                                    <input type="text" class="form-control" id="itemName" name="item_name" required <?= !$can_manage ? 'readonly' : '' ?>>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" id="itemCategory" name="category" <?= !$can_manage ? 'disabled' : '' ?>>
+                                        <option value="">Select Category</option>
+                                        <?php foreach($categories as $category): ?>
+                                        <option value="<?=htmlspecialchars($category['pos_category'])?>"><?=htmlspecialchars($category['pos_category'])?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="row mt-2">
-                            <div class="col-md-4">
-                                <label class="form-label">Brand</label>
-                                <input type="text" class="form-control" id="itemBrand" name="brand" <?= !$can_manage ? 'readonly' : '' ?>>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Source *</label>
+                                    <select class="form-select" id="itemSource" name="item_source" required <?= !$can_manage ? 'disabled' : '' ?>>
+                                        <option value="">Select Source</option>
+                                        <option value="trade_in">Trade-In</option>
+                                        <option value="donation">Donation</option>
+                                        <option value="abandoned">Customer Abandoned Item</option>
+                                        <option value="purchase">Purchase</option>
+                                        <option value="ebay">eBay</option>
+                                        <option value="parts_dismantle">Parts/Salvage</option>
+                                        <option value="stock_transfer">Stock Transfer</option>
+                                        <option value="returned_item">Returned Item</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Condition *</label>
+                                    <select class="form-select" id="itemCondition" name="condition" required <?= !$can_manage ? 'disabled' : '' ?>>
+                                        <option value="excellent">Excellent</option>
+                                        <option value="good">Good</option>
+                                        <option value="fair">Fair</option>
+                                        <option value="poor">Poor</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Model</label>
-                                <input type="text" class="form-control" id="itemModel" name="model_number" <?= !$can_manage ? 'readonly' : '' ?>>
+                            
+                            <!-- Source Details (Dynamic) -->
+                            <div class="row mt-3" id="sourceDetailsRow" style="display: none;">
+                                <div class="col-12">
+                                    <label class="form-label" id="sourceDetailsLabel">Source Details *</label>
+                                    <input type="text" class="form-control" id="sourceDetails" name="supplier_info" placeholder="" <?= !$can_manage ? 'readonly' : '' ?>>
+                                    <small class="text-muted" id="sourceDetailsHint"></small>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Serial Number</label>
-                                <input type="text" class="form-control" id="itemSerial" name="serial_number" <?= !$can_manage ? 'readonly' : '' ?>>
+                            
+                            <?php if ($can_view_financial): ?>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Purchase Price (£) *</label>
+                                    <input type="number" class="form-control" id="purchasePrice" name="purchase_price" step="0.01" min="0" placeholder="Enter amount paid" required <?= !$can_manage ? 'readonly' : '' ?>>
+                                    <small class="text-muted">How much was paid for this item (enter 0 if free)</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Location *</label>
+                                    <select class="form-select" id="itemLocation" name="location" required <?= !$can_manage ? 'disabled' : '' ?>>
+                                        <option value="cs">Commerce Street</option>
+                                        <option value="as">Argyle Street</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="row mt-2">
-                            <div class="col-md-3">
-                                <label class="form-label">Condition *</label>
-                                <select class="form-select" id="itemCondition" name="condition" required <?= !$can_manage ? 'disabled' : '' ?>>
-                                    <option value="excellent">Excellent</option>
-                                    <option value="good">Good</option>
-                                    <option value="fair">Fair</option>
-                                    <option value="poor">Poor</option>
-                                </select>
+                            <?php else: ?>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label class="form-label">Location *</label>
+                                    <select class="form-select" id="itemLocation" name="location" required <?= !$can_manage ? 'disabled' : '' ?>>
+                                        <option value="cs">Commerce Street</option>
+                                        <option value="as">Argyle Street</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Source *</label>
-                                <select class="form-select" id="itemSource" name="item_source" required <?= !$can_manage ? 'disabled' : '' ?>>
-                                    <option value="">Select Source</option>
-                                    <option value="trade_in">Trade-In</option>
-                                    <option value="donation">Donation</option>
-                                    <option value="abandoned">Customer Abandoned Item</option>
-                                    <option value="purchase">Purchase</option>
-                                    <option value="parts_dismantle">Parts/Salvage</option>
-                                    <option value="stock_transfer">Stock Transfer</option>
-                                    <option value="returned_item">Returned Item</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Status *</label>
-                                <select class="form-select" id="itemStatus" name="status" required <?= !$can_manage ? 'disabled' : '' ?>>
-                                    <option value="in_stock">In Stock</option>
-                                    <option value="sold">Sold</option>
-                                    <option value="reserved">Reserved</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Location *</label>
-                                <select class="form-select" id="itemLocation" name="location" required <?= !$can_manage ? 'disabled' : '' ?>>
-                                    <option value="cs">Commerce Street</option>
-                                    <option value="as">Argyle Street</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <!-- Pricing Section - Highlighted (Visible to all) -->
-                        <div class="row mt-3">
-                            <div class="col-12">
-                                <div class="pricing-highlight-box">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label class="form-label"><i class="fas fa-tag me-1"></i><strong>Selling Price (£) *</strong></label>
-                                            <input type="number" class="form-control" id="sellingPrice" name="selling_price" step="0.01" min="0" placeholder="Asking price" <?= !$can_manage ? 'readonly' : '' ?>>
-                                            <small class="text-muted">The asking price shown to customers</small>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label"><i class="fas fa-hand-holding-usd me-1"></i><strong>Lowest Price (£)</strong></label>
-                                            <input type="number" class="form-control" id="lowestPrice" name="lowest_price" step="0.01" min="0" placeholder="Minimum negotiation price" <?= !$can_manage ? 'readonly' : '' ?>>
-                                            <small class="text-muted">Minimum price staff can negotiate to</small>
+                            <?php endif; ?>
+                            
+                            <!-- Tracking Codes - Highlighted and Required -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="tracking-code-section">
+                                        <h6 class="mb-3"><i class="fas fa-barcode me-2"></i>Item Tracking Code *</h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Pre-printed Barcode (DSH) - SCAN OR ENTER</label>
+                                                <input type="text" class="form-control form-control-lg preprinted-highlight" id="preprintedCode" name="preprinted_code" placeholder="DSH1, DSH2, DSH3..." <?= !$can_manage ? 'readonly' : '' ?>>
+                                                <small class="text-muted"><strong>Scan the pre-printed barcode or type it manually</strong></small>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Generated Tracking Code (SH)</label>
+                                                <input type="text" class="form-control form-control-lg" id="trackingCode" name="tracking_code" placeholder="Will be generated" readonly>
+                                                <small class="text-muted">Auto-generated if no pre-printed code used</small>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Tracking & Dates Section -->
-                        <div class="section-divider">
-                            <h6 class="text-muted mb-2"><i class="fas fa-barcode me-2"></i>Tracking & Dates</h6>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-4">
-                                <label class="form-label">Preprinted Code (DSH)</label>
-                                <input type="text" class="form-control" id="preprintedCode" name="preprinted_code" placeholder="DSH1, DSH2..." <?= !$can_manage ? 'readonly' : '' ?>>
+                        <!-- STAGE 2: Product Details -->
+                        <div class="wizard-stage" id="stage2" style="display: none;">
+                            <div class="stage-header">
+                                <h6><i class="fas fa-box me-2"></i>Product Details</h6>
+                                <p class="text-muted mb-3">Physical characteristics and identifiers</p>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Tracking Code (SH)</label>
-                                <input type="text" class="form-control" id="trackingCode" name="tracking_code" placeholder="Auto-generated" readonly>
+                            
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Brand</label>
+                                    <input type="text" class="form-control" id="itemBrand" name="brand" <?= !$can_manage ? 'readonly' : '' ?>>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Model</label>
+                                    <input type="text" class="form-control" id="itemModel" name="model_number" <?= !$can_manage ? 'readonly' : '' ?>>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Serial Number</label>
+                                    <input type="text" class="form-control" id="itemSerial" name="serial_number" <?= !$can_manage ? 'readonly' : '' ?>>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Acquisition Date</label>
-                                <input type="date" class="form-control" id="acquisitionDate" name="acquisition_date" value="<?=date('Y-m-d')?>" <?= !$can_manage ? 'readonly' : '' ?>>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Acquisition Date</label>
+                                    <input type="date" class="form-control" id="acquisitionDate" name="acquisition_date" value="<?=date('Y-m-d')?>" <?= !$can_manage ? 'readonly' : '' ?>>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <!-- Notes Section -->
-                        <div class="section-divider">
-                            <h6 class="text-muted mb-2"><i class="fas fa-sticky-note me-2"></i>Notes & Details</h6>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-12">
-                                <label class="form-label">Condition Notes</label>
-                                <textarea class="form-control" id="detailedCondition" name="detailed_condition" rows="2" <?= !$can_manage ? 'readonly' : '' ?>></textarea>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-2">
-                            <div class="col-md-6">
-                                <label class="form-label">General Notes</label>
-                                <textarea class="form-control" id="itemNotes" name="notes" rows="2" <?= !$can_manage ? 'readonly' : '' ?>></textarea>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Warranty Information</label>
-                                <textarea class="form-control" id="warrantyInfo" name="warranty_info" rows="2" <?= !$can_manage ? 'readonly' : '' ?>></textarea>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-2">
-                            <div class="col-12">
-                                <label class="form-label">Supplier Information</label>
-                                <input type="text" class="form-control" id="supplierInfo" name="supplier_info" <?= !$can_manage ? 'readonly' : '' ?>>
-                            </div>
-                        </div>
-                        
-                        <!-- Financial Section (Permission Required) -->
-                        <?php if ($can_view_financial): ?>
-                        <div class="section-divider">
-                            <h6 class="text-muted mb-2">
-                                <i class="fas fa-pound-sign me-2"></i>Financial Information
-                                <span class="permission-badge badge-restricted"><i class="fas fa-lock"></i> Restricted</span>
-                            </h6>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-4">
-                                <label class="form-label">Purchase Price (£)</label>
-                                <input type="number" class="form-control" id="purchasePrice" name="purchase_price" step="0.01" min="0" <?= !$can_manage ? 'readonly' : '' ?>>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Estimated Value (£)</label>
-                                <input type="number" class="form-control" id="estimatedValue" name="estimated_value" step="0.01" min="0" <?= !$can_manage ? 'readonly' : '' ?>>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Estimated Sale Price (£)</label>
-                                <input type="number" class="form-control" id="estimatedSalePrice" name="estimated_sale_price" step="0.01" min="0" <?= !$can_manage ? 'readonly' : '' ?>>
-                            </div>
-                        </div>
-                        
-                        <?php if ($can_manage): ?>
-                        <div class="row mt-2">
-                            <div class="col-12">
-                                <div class="alert alert-info mb-0">
-                                    <strong id="profitCalc">Enter prices to see potential profit</strong>
+                            
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label class="form-label">Condition Notes</label>
+                                    <textarea class="form-control" id="detailedCondition" name="detailed_condition" rows="3" placeholder="Describe the item's condition, any defects, wear, or notable features..." <?= !$can_manage ? 'readonly' : '' ?>></textarea>
                                 </div>
                             </div>
                         </div>
-                        <?php endif; ?>
-                        <?php endif; ?>
                         
-                        <!-- Customer Section (Permission Required) -->
-                        <?php if ($can_view_seller): ?>
-                        <div class="section-divider">
-                            <h6 class="text-muted mb-2">
-                                <i class="fas fa-user me-2"></i>Seller Information
-                                <span class="permission-badge badge-restricted"><i class="fas fa-lock"></i> Restricted</span>
-                            </h6>
+                        <!-- STAGE 3: Pricing -->
+                        <div class="wizard-stage" id="stage3" style="display: none;">
+                            <div class="stage-header">
+                                <h6><i class="fas fa-pound-sign me-2"></i>Pricing Information</h6>
+                                <p class="text-muted mb-3">Set prices for this item</p>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="pricing-box">
+                                        <label class="form-label"><strong>Selling Price (£) *</strong></label>
+                                        <input type="number" class="form-control form-control-lg" id="sellingPrice" name="selling_price" step="0.01" min="0" placeholder="0.00" required <?= !$can_manage ? 'readonly' : '' ?>>
+                                        <small class="text-muted">The asking price shown to customers</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="pricing-box">
+                                        <label class="form-label"><strong>Lowest Price (£)</strong></label>
+                                        <input type="number" class="form-control form-control-lg" id="lowestPrice" name="lowest_price" step="0.01" min="0" placeholder="0.00" <?= !$can_manage ? 'readonly' : '' ?>>
+                                        <small class="text-muted">Minimum price staff can negotiate to</small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="row">
-                            <div class="col-md-4">
-                                <label class="form-label">Seller Name</label>
-                                <input type="text" class="form-control" id="sellerName" name="customer_name" <?= !$can_manage ? 'readonly' : '' ?>>
+                        <!-- STAGE 4: Photos -->
+                        <div class="wizard-stage" id="stage4" style="display: none;">
+                            <div class="stage-header">
+                                <h6><i class="fas fa-camera me-2"></i>Item Photos</h6>
+                                <p class="text-muted mb-3">Add photos of the item (optional)</p>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Seller Contact</label>
-                                <input type="text" class="form-control" id="sellerContact" name="customer_contact" <?= !$can_manage ? 'readonly' : '' ?>>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Seller ID</label>
-                                <input type="text" class="form-control" id="sellerId" name="customer_id" <?= !$can_manage ? 'readonly' : '' ?>>
+                            
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="photo-upload-section">
+                                        <!-- Camera Capture -->
+                                        <div class="camera-section mb-4">
+                                            <button type="button" class="btn btn-primary btn-lg w-100" id="openCameraBtn">
+                                                <i class="fas fa-camera me-2"></i> Take Photo with Camera
+                                            </button>
+                                            
+                                            <div id="cameraContainer" style="display: none;" class="mt-3">
+                                                <div class="camera-preview">
+                                                    <video id="cameraVideo" autoplay playsinline></video>
+                                                    <canvas id="cameraCanvas" style="display: none;"></canvas>
+                                                </div>
+                                                <div class="camera-controls mt-2">
+                                                    <button type="button" class="btn btn-success me-2" id="capturePhotoBtn">
+                                                        <i class="fas fa-circle me-1"></i> Capture
+                                                    </button>
+                                                    <button type="button" class="btn btn-secondary" id="closeCameraBtn">
+                                                        <i class="fas fa-times me-1"></i> Close Camera
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- File Upload -->
+                                        <div class="file-upload-section mb-4">
+                                            <label class="btn btn-outline-primary btn-lg w-100">
+                                                <i class="fas fa-upload me-2"></i> Upload Photos from Device
+                                                <input type="file" id="photoFileInput" accept="image/*" multiple style="display: none;">
+                                            </label>
+                                        </div>
+                                        
+                                        <!-- Photo Preview Grid -->
+                                        <div id="photoPreviewGrid" class="photo-grid">
+                                            <!-- Photos will be displayed here -->
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <?php else: ?>
-                        <div class="section-divider">
-                            <div class="alert alert-warning mb-0">
-                                <i class="fas fa-lock me-2"></i>
-                                <strong>Seller Information:</strong> You need "View Customer Data" permission to see customer details.
+                        
+                        <!-- STAGE 5: Additional Information -->
+                        <div class="wizard-stage" id="stage5" style="display: none;">
+                            <div class="stage-header">
+                                <h6><i class="fas fa-info-circle me-2"></i>Additional Information</h6>
+                                <p class="text-muted mb-3">Optional notes and details</p>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">General Notes</label>
+                                    <textarea class="form-control" id="itemNotes" name="notes" rows="4" placeholder="Any additional information about this item..." <?= !$can_manage ? 'readonly' : '' ?>></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Warranty Information</label>
+                                    <textarea class="form-control" id="warrantyInfo" name="warranty_info" rows="4" placeholder="Warranty details, duration, coverage..." <?= !$can_manage ? 'readonly' : '' ?>></textarea>
+                                </div>
                             </div>
                         </div>
-                        <?php endif; ?>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <?php if ($can_manage): ?>
-                    <button type="button" class="btn btn-primary" id="editBtn">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button type="button" class="btn btn-success" id="saveBtn" style="display:none;">
-                        <i class="fas fa-save"></i> Save Changes
-                    </button>
-                    <button type="button" class="btn btn-secondary" id="cancelBtn" style="display:none;">
-                        Cancel
-                    </button>
-                    <?php endif; ?>
+                    <div class="wizard-navigation">
+                        <button type="button" class="btn btn-outline-primary" id="prevStageBtn" style="display: none;">
+                            <i class="fas fa-arrow-left me-1"></i> Previous
+                        </button>
+                        <button type="button" class="btn btn-primary" id="nextStageBtn">
+                            Next <i class="fas fa-arrow-right ms-1"></i>
+                        </button>
+                        <?php if ($can_manage): ?>
+                        <button type="button" class="btn btn-success" id="saveBtn" style="display: none;">
+                            <i class="fas fa-save me-1"></i> Save Item
+                        </button>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
@@ -727,6 +975,272 @@ const user_location = '<?php echo $effective_location; ?>';
         $('#purchasePrice, #estimatedSalePrice').on('input', function() {
             calculateProfit();
         });
+        
+        // Handle source selection change to show/hide source details
+        $('#itemSource').on('change', function() {
+            updateSourceDetails($(this).val());
+        });
+
+        function updateSourceDetails(source) {
+            const sourceDetailsRow = $('#sourceDetailsRow');
+            const sourceDetailsLabel = $('#sourceDetailsLabel');
+            const sourceDetailsInput = $('#sourceDetails');
+            const sourceDetailsHint = $('#sourceDetailsHint');
+            
+            // Configuration for each source type
+            const sourceConfig = {
+                'ebay': {
+                    label: 'eBay Item Number *',
+                    placeholder: 'e.g., 123456789012',
+                    hint: 'Enter the eBay item/listing number',
+                    required: true
+                },
+                'purchase': {
+                    label: 'Supplier Name *',
+                    placeholder: 'e.g., Supplier Ltd',
+                    hint: 'Enter the name of the supplier',
+                    required: true
+                },
+                'trade_in': {
+                    label: 'Trade-In Reference',
+                    placeholder: 'Auto-filled from trade-in',
+                    hint: 'This should be filled automatically from trade-in workflow',
+                    required: false
+                },
+                'donation': {
+                    label: 'Donor Reference',
+                    placeholder: 'Reference or details',
+                    hint: 'Optional reference for the donation',
+                    required: false
+                },
+                'abandoned': {
+                    label: 'Original Customer Reference',
+                    placeholder: 'Reference or details',
+                    hint: 'Optional reference for abandoned item',
+                    required: false
+                },
+                'stock_transfer': {
+                    label: 'Transfer Reference *',
+                    placeholder: 'e.g., Transfer from AS to CS',
+                    hint: 'Enter transfer details or reference',
+                    required: true
+                },
+                'returned_item': {
+                    label: 'Return Reference *',
+                    placeholder: 'e.g., Original order number',
+                    hint: 'Enter the return or order reference',
+                    required: true
+                },
+                'parts_dismantle': {
+                    label: 'Source Item Reference',
+                    placeholder: 'e.g., Parent item tracking code',
+                    hint: 'Optional reference to the original item',
+                    required: false
+                },
+                'other': {
+                    label: 'Source Details',
+                    placeholder: 'Enter source details',
+                    hint: 'Optional additional details',
+                    required: false
+                }
+            };
+            
+            if (source && sourceConfig[source]) {
+                const config = sourceConfig[source];
+                sourceDetailsLabel.text(config.label);
+                sourceDetailsInput.attr('placeholder', config.placeholder);
+                sourceDetailsHint.text(config.hint);
+                
+                // Set required attribute
+                if (config.required) {
+                    sourceDetailsInput.attr('required', 'required');
+                    sourceDetailsInput.addClass('required-field');
+                } else {
+                    sourceDetailsInput.removeAttr('required');
+                    sourceDetailsInput.removeClass('required-field');
+                }
+                
+                sourceDetailsRow.show();
+            } else {
+                sourceDetailsRow.hide();
+                sourceDetailsInput.removeAttr('required');
+                sourceDetailsInput.val(''); // Clear value when hidden
+            }
+        }
+        
+        // Wizard Navigation
+        let currentStage = 1;
+        const totalStages = 5;
+        let capturedPhotos = []; // Store captured/uploaded photos
+        let cameraStream = null;
+        
+        // Stage navigation
+        $('#nextStageBtn').on('click', async function() {
+            const validationResult = await validateCurrentStage();
+            if (validationResult) {
+                if (currentStage < totalStages) {
+                    goToStage(currentStage + 1);
+                }
+            }
+        });
+        
+        $('#prevStageBtn').on('click', function() {
+            if (currentStage > 1) {
+                goToStage(currentStage - 1);
+            }
+        });
+        
+        function goToStage(stageNumber) {
+            // Hide current stage
+            $('#stage' + currentStage).hide();
+            $('.wizard-step[data-step="' + currentStage + '"]').removeClass('active').addClass('completed');
+            
+            // Show new stage
+            currentStage = stageNumber;
+            $('#stage' + currentStage).show();
+            $('.wizard-step[data-step="' + currentStage + '"]').addClass('active').removeClass('completed');
+            
+            // Update navigation buttons
+            $('#prevStageBtn').toggle(currentStage > 1);
+            $('#nextStageBtn').toggle(currentStage < totalStages);
+            $('#saveBtn').toggle(currentStage === totalStages);
+        }
+        
+        function validateCurrentStage() {
+            let isValid = true;
+            let errorMessage = '';
+            
+            if (currentStage === 1) {
+                // Validate essential information
+                if (!$('#itemName').val()) {
+                    errorMessage = 'Item name is required';
+                    isValid = false;
+                }
+                else if (!$('#itemSource').val()) {
+                    errorMessage = 'Source must be selected';
+                    isValid = false;
+                }
+                else if ($('#sourceDetails').attr('required') && !$('#sourceDetails').val().trim()) {
+                    const labelText = $('#sourceDetailsLabel').text().replace(' *', '');
+                    errorMessage = `${labelText} is required for this source type`;
+                    isValid = false;
+                }
+                <?php if ($can_view_financial): ?>
+                else if ($('#purchasePrice').val() === '' || $('#purchasePrice').val() === null) {
+                    errorMessage = 'Purchase price is required (enter 0 if item was free)';
+                    isValid = false;
+                }
+                <?php endif; ?>
+                
+                // Check for preprinted code - warn if not provided
+                if (isValid && !$('#preprintedCode').val().trim()) {
+                    return new Promise((resolve) => {
+                        Swal.fire({
+                            title: 'No Pre-printed Barcode Scanned',
+                            html: '<p><strong>You have not entered a pre-printed barcode (DSH code).</strong></p>' +
+                                  '<p>If you proceed without scanning a barcode:</p>' +
+                                  '<ul style="text-align: left; margin: 10px 40px;">' +
+                                  '<li>A tracking code will be generated automatically</li>' +
+                                  '<li>You will need to write this code on a label</li>' +
+                                  '<li>You must attach the label to the item</li>' +
+                                  '</ul>',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Proceed Without Barcode',
+                            cancelButtonText: 'Go Back to Scan',
+                            confirmButtonColor: '#f57c00',
+                            cancelButtonColor: '#6c757d'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                resolve(true); // Proceed without preprinted code
+                            } else {
+                                // Go back to let them scan
+                                $('#preprintedCode').focus();
+                                resolve(false);
+                            }
+                        });
+                    });
+                }
+            }
+            
+            if (!isValid) {
+                Swal.fire('Error', errorMessage, 'error');
+            }
+            
+            return Promise.resolve(isValid);
+        }
+        
+        // Camera and Photo Handling
+        $('#openCameraBtn').on('click', async function() {
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' }
+                });
+                $('#cameraVideo')[0].srcObject = cameraStream;
+                $('#cameraContainer').show();
+                $(this).hide();
+            } catch(err) {
+                Swal.fire('Error', 'Unable to access camera: ' + err.message, 'error');
+            }
+        });
+        
+        $('#closeCameraBtn').on('click', function() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            $('#cameraContainer').hide();
+            $('#openCameraBtn').show();
+        });
+        
+        $('#capturePhotoBtn').on('click', function() {
+            const video = $('#cameraVideo')[0];
+            const canvas = $('#cameraCanvas')[0];
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            
+            canvas.toBlob(function(blob) {
+                const file = new File([blob], `photo_${Date.now()}.jpg`, { type: 'image/jpeg' });
+                addPhotoToGrid(file);
+            }, 'image/jpeg', 0.85);
+        });
+        
+        $('#photoFileInput').on('change', function(e) {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    addPhotoToGrid(file);
+                }
+            });
+            $(this).val(''); // Clear input
+        });
+        
+        function addPhotoToGrid(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const photoIndex = capturedPhotos.length;
+                capturedPhotos.push(file);
+                
+                const photoHtml = `
+                    <div class="photo-item" data-index="${photoIndex}">
+                        <img src="${e.target.result}" alt="Item photo">
+                        <button type="button" class="photo-item-remove" onclick="removePhoto(${photoIndex})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                $('#photoPreviewGrid').append(photoHtml);
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        window.removePhoto = function(index) {
+            capturedPhotos[index] = null; // Mark as deleted
+            $(`.photo-item[data-index="${index}"]`).fadeOut(300, function() {
+                $(this).remove();
+            });
+        };
 
         function loadItems() {
             const viewAllLocations = $('#allLocationsToggle').is(':checked');
@@ -855,7 +1369,21 @@ const user_location = '<?php echo $effective_location; ?>';
             $('#itemForm')[0].reset();
             $('#itemId').val('');
             $('#trackingCode').val('');
+            $('#sourceDetails').val('');
+            $('#sourceDetailsRow').hide();
             isEditMode = false;
+            
+            // Reset wizard
+            goToStage(1);
+            $('.wizard-step').removeClass('completed');
+            capturedPhotos = [];
+            $('#photoPreviewGrid').empty();
+            $('#cameraContainer').hide();
+            $('#openCameraBtn').show();
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
             
             // Hide all buttons initially
             $('#editBtn, #saveBtn, #cancelBtn').hide();
@@ -864,18 +1392,26 @@ const user_location = '<?php echo $effective_location; ?>';
             $('#itemSource option').prop('disabled', false);
             
             if (addMode && canManage) {
-                // New item - start in edit mode
+                // New item - start in wizard mode
                 $('#itemModalLabel').text('Add New Item');
                 $('#itemLocation').val('<?=$effective_location?>');
                 $('#acquisitionDate').val('<?=date('Y-m-d')?>');
+                $('#itemStatus').val('in_stock'); // Default to in stock
                 
                 // Disable "Trade-In" option for new items (must use trade-in workflow)
                 $('#itemSource option[value="trade_in"]').prop('disabled', true);
                 
+                // Show wizard progress
+                $('#wizardProgress').show();
                 toggleEditMode(true);
             } else if (item) {
-                // Viewing existing item - start in view mode
+                // Viewing existing item - hide wizard, show all fields
                 $('#itemModalLabel').text('Item Details');
+                $('#wizardProgress').hide();
+                
+                // Show all stages at once when viewing
+                $('.wizard-stage').show();
+                
                 populateForm(item);
                 toggleEditMode(false);
                 if (canManage) {
@@ -913,7 +1449,10 @@ const user_location = '<?php echo $effective_location; ?>';
             $('#detailedCondition').val(item.detailed_condition);
             $('#itemNotes').val(item.notes);
             $('#warrantyInfo').val(item.warranty_info);
-            $('#supplierInfo').val(item.supplier_info);
+            
+            // Populate source details and trigger source details update
+            $('#sourceDetails').val(item.supplier_info);
+            updateSourceDetails(item.item_source);
             
             // Pricing fields (visible to all)
             $('#sellingPrice').val(item.selling_price);
@@ -1008,6 +1547,34 @@ const user_location = '<?php echo $effective_location; ?>';
                 return;
             }
             
+            // Validate source is selected
+            if (!$('#itemSource').val()) {
+                Swal.fire('Error', 'Source must be selected', 'error');
+                return;
+            }
+            
+            // Validate source details if required
+            const sourceDetailsInput = $('#sourceDetails');
+            if (sourceDetailsInput.attr('required') && !sourceDetailsInput.val().trim()) {
+                const labelText = $('#sourceDetailsLabel').text().replace(' *', '');
+                Swal.fire('Error', `${labelText} is required for this source type`, 'error');
+                return;
+            }
+            
+            // Validate purchase price is provided if financial fields are visible
+            <?php if ($can_view_financial): ?>
+            if ($('#purchasePrice').val() === '' || $('#purchasePrice').val() === null) {
+                Swal.fire('Error', 'Purchase price is required (enter 0 if item was free)', 'error');
+                return;
+            }
+            <?php endif; ?>
+            
+            // Validate selling price is provided
+            if ($('#sellingPrice').val() === '' || $('#sellingPrice').val() === null) {
+                Swal.fire('Error', 'Selling price is required', 'error');
+                return;
+            }
+            
             // Validate preprinted code format if provided
             const preprintedCode = $('#preprintedCode').val().trim();
             if (preprintedCode && !preprintedCode.toUpperCase().startsWith('DSH')) {
@@ -1015,7 +1582,20 @@ const user_location = '<?php echo $effective_location; ?>';
                 return;
             }
             
-            const formData = $('#itemForm').serialize();
+            // Create FormData to handle both form data and photos
+            const formData = new FormData();
+            
+            // Add all form fields
+            $('#itemForm').serializeArray().forEach(function(field) {
+                formData.append(field.name, field.value);
+            });
+            
+            // Add photos
+            capturedPhotos.forEach(function(photo, index) {
+                if (photo !== null) { // Skip deleted photos
+                    formData.append('item_photos[]', photo);
+                }
+            });
             
             Swal.fire({
                 title: 'Saving...',
@@ -1029,12 +1609,49 @@ const user_location = '<?php echo $effective_location; ?>';
                 url: 'php/save_second_hand_item.php',
                 method: 'POST',
                 data: formData,
+                processData: false, // Don't process the FormData
+                contentType: false, // Let browser set correct content type
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        Swal.fire('Success', 'Item saved successfully', 'success');
-                        itemModal.hide();
-                        loadItems();
+                        const usedPreprintedCode = $('#preprintedCode').val().trim();
+                        
+                        // If no preprinted code was used, show the generated tracking code
+                        if (!usedPreprintedCode && response.tracking_code) {
+                            Swal.fire({
+                                title: '<strong>Item Saved Successfully!</strong>',
+                                html: `
+                                    <div style="margin: 20px 0;">
+                                        <div style="background: #fff3cd; padding: 20px; border-radius: 8px; border: 2px solid #ffc107; margin-bottom: 20px;">
+                                            <p style="font-size: 1.1em; margin-bottom: 10px;"><strong>Generated Tracking Code:</strong></p>
+                                            <p style="font-size: 2em; font-weight: bold; color: #d63384; margin: 0;">${response.tracking_code}</p>
+                                        </div>
+                                        <div style="text-align: left; background: #f8f9fa; padding: 15px; border-radius: 6px;">
+                                            <p style="margin: 0 0 10px 0;"><strong>⚠️ IMPORTANT: Next Steps</strong></p>
+                                            <ol style="margin: 0; padding-left: 20px;">
+                                                <li>Write <strong>${response.tracking_code}</strong> on a label</li>
+                                                <li>Attach the label to the item</li>
+                                                <li>Ensure the label is clearly visible</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                `,
+                                icon: 'warning',
+                                confirmButtonText: 'I Have Labeled the Item',
+                                confirmButtonColor: '#28a745',
+                                allowOutsideClick: false,
+                                customClass: {
+                                    popup: 'swal-wide'
+                                }
+                            }).then(() => {
+                                itemModal.hide();
+                                loadItems();
+                            });
+                        } else {
+                            Swal.fire('Success', 'Item saved successfully', 'success');
+                            itemModal.hide();
+                            loadItems();
+                        }
                     } else {
                         Swal.fire('Error', response.message || 'Failed to save item', 'error');
                     }
